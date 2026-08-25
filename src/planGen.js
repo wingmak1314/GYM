@@ -17,8 +17,9 @@ function rng(seed) {
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296
   }
 }
-const pick = (r, arr) => arr[Math.floor(r() * arr.length)]
+const pick = (r, arr) => (arr && arr.length ? arr[Math.floor(r() * arr.length)] : null)
 const pickN = (r, arr, n) => {
+  if (!arr || !arr.length) return []
   const copy = [...arr]; const out = []
   while (out.length < n && copy.length) out.push(copy.splice(Math.floor(r() * copy.length), 1)[0])
   return out
@@ -37,6 +38,7 @@ const P = {
   chest: ['bench', 'ibench', 'dbench', 'idbench', 'pecdeck', 'cablefly', 'pushup', 'dips', 'smithbench', 'cablecross', 'floorpress'],
   back: ['pullup', 'latpull', 'bbrow', 'dbrow', 'searow', 'reversechin', 'narrowlat', 'pulldown', 'australian', 'smithrow'],
   shoulders: ['ohp', 'dbohp', 'laterals', 'reardelt', 'facelift', 'arnold', 'machineohp', 'singlelaterals'],
+  ohp: ['ohp', 'dbohp', 'arnold', 'machineohp', 'smithohp', 'kbellpress'],
   biceps: ['bbcurl', 'dbcurl', 'hammer', 'preacher', 'cablecurl', 'inclinecurl', 'reversecurl'],
   triceps: ['pushdown', 'ropedown', 'skull', 'closebench', 'ohdbext', 'singlepushdown'],
   quads: ['squat', 'frontsquat', 'legpress', 'legext', 'hacksquat', 'goblet', 'bulgarian', 'lunge', 'boxsquat', 'smithsquat'],
