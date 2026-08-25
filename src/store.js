@@ -9,7 +9,7 @@ export const defaultState = () => ({
   customExercises: [], // [{id, zh, muscle, equipment}]
   suppLog: {},       // { 'YYYY-MM-DD': ['肌酸', '蛋白粉'] }
   suppList: ['蛋白粉', '肌酸', '魚油', '維他命D', '鋅鎂片', '咖啡因'],
-  settings: { unit: 'kg', goal: '增肌', pantryId: '', user: '', autoSync: false, lastSync: '' },
+  settings: { unit: 'kg', goal: '增肌', ghToken: '', ghGistId: '', autoGh: false, lastSync: '' },
 });
 
 export function loadState() {
