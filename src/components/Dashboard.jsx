@@ -115,7 +115,7 @@ function AiCoachCard({ state }) {
           <div className="ai-reco-icon"><ExerciseIcon icon={ex ? ex.id : 'generic'} size="md" /></div>
           <div>
             <b>今日建議:{reco.muscle}</b>
-            <div style={{ color: 'var(--accent)', fontWeight: 600 }}>{ex ? ex.zh : reco.zh} — 最高性價比選擇</div>
+            <div style={{ color: '#2997ff', fontWeight: 600 }}>{ex ? ex.zh : reco.zh} — 最高性價比選擇</div>
             <p>{reco.reason}</p>
           </div>
         </div>
