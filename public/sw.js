@@ -1,7 +1,7 @@
 // GymLog service worker — v3
 // 修正:導航 network-first(永遠攞最新版),只有 hashed assets 先 cache-first
 // 升級時清晒舊 cache,避免舊 shell + 新 assets 混合 → 白畫面
-const CACHE = 'gymlog-v3';
+const CACHE = 'gymlog-v4';
 
 self.addEventListener('install', (e) => {
   e.waitUntil(
