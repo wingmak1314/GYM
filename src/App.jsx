@@ -160,9 +160,9 @@ export default function App() {
 
   return (
     <div className="app">
-      <aside className="sidebar">
+      <header className="topbar">
         <div className="logo">
-          <svg className="logo-mark" viewBox="0 0 64 64" width="36" height="36">
+          <svg className="logo-mark" viewBox="0 0 64 64" width="30" height="30">
             <defs>
               <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
                 <stop offset="0" stopColor="#c7f546" /><stop offset="1" stopColor="#4db8ff" />
@@ -181,15 +181,15 @@ export default function App() {
         <nav>
           {TABS.map((t) => (
             <button key={t.id} className={`nav-item ${tab === t.id ? 'active' : ''}`} onClick={() => setTab(t.id)}>
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d={t.icon} /></svg>
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d={t.icon} /></svg>
               {t.zh}
             </button>
           ))}
         </nav>
-        <div className="sidebar-foot">
-          <button className="btn btn-primary btn-block" onClick={() => startWorkout()}>＋ 開始訓練</button>
+        <div className="topbar-actions">
+          <button className="btn btn-primary btn-sm" onClick={() => startWorkout()}>＋ 開始訓練</button>
         </div>
-      </aside>
+      </header>
 
       <main className="main">
         {tab === 'dash' && <Dashboard ctx={ctx} />}
