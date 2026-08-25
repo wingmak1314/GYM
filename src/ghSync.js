@@ -48,9 +48,20 @@ export async function pullFromGist(token, gistId) {
   return JSON.parse(f.content)
 }
 
-// 驗證 token + 攞用戶名
+// 驗證 token:測 /user + /gists(確保有 gist 權限)
+// fine-grained token 唔支援 Gist API,要用 classic token 淨 tick gist
 export async function ghWhoami(token) {
   if (!token) throw new Error('未設定 GitHub Token')
   const u = await ghReq(token, '/user', 'GET')
+  // 測 gist 權限:冇 gist scope 會 401/403
+  await ghReq(token, '/gists', 'GET')
   return u.login
+}
+
+// 將 401/403 轉做更清楚嘅提示
+export function friendlyGhError(e) {
+  const m = String(e.message || '')
+  if (m.includes('401')) return 'Token 冇效或已過期 — 請重新整過(要 classic token)'
+  if (m.includes('403')) return 'Token 冇 gist 權限 — 要「Tokens (classic)」並淨係 tick「gist」一格'
+  return m
 }

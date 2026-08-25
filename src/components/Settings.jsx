@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { exportCSV, parseCSV } from '../engine.js'
 import { GOALS } from '../aiCoach.js'
-import { pushToGist, pullFromGist, ghWhoami } from '../ghSync.js'
+import { pushToGist, pullFromGist, ghWhoami, friendlyGhError } from '../ghSync.js'
 
 export default function Settings({ ctx }) {
   const { state, setState, unit, showToast } = ctx
@@ -23,7 +23,7 @@ export default function Settings({ ctx }) {
       setSt(`✅ 已備份${r.created ? '(已建立私人 Gist)' : ''} (${ts})`)
       showToast('✅ 已備份到 GitHub')
     } catch (e) {
-      setSt(`❌ ${e.message}`, true)
+      setSt(`❌ ${friendlyGhError(e)}`, true)
     } finally { setSyncing(false) }
   }
 
@@ -36,7 +36,7 @@ export default function Settings({ ctx }) {
       setSt(`✅ 已回復 ${n} 次訓練`)
       showToast(`✅ 已從 GitHub 回復 (${n} 次訓練)`)
     } catch (e) {
-      setSt(`❌ ${e.message}`, true)
+      setSt(`❌ ${friendlyGhError(e)}`, true)
     } finally { setSyncing(false) }
   }
 
@@ -46,7 +46,7 @@ export default function Settings({ ctx }) {
       const login = await ghWhoami(state.settings.ghToken)
       setSt(`✅ Token 有效 — ${login}`)
     } catch (e) {
-      setSt(`❌ ${e.message}`, true)
+      setSt(`❌ ${friendlyGhError(e)}`, true)
     } finally { setSyncing(false) }
   }
 
@@ -86,8 +86,8 @@ export default function Settings({ ctx }) {
         <h2>💾 GitHub 備份 <span className="card-sub">資料直接存喺你嘅 GitHub(私人 Gist)</span></h2>
         <p className="muted small">
           GitHub 規定寫入一定要憑證,所以要做一次(約 30 秒,之後就唔使再理):<br />
-          ① 開 <a href="https://github.com/settings/tokens/new" target="_blank" rel="noreferrer" style={{ color: 'var(--accent)' }}>github.com/settings/tokens/new</a>(會叫你入密碼)<br />
-          ② Note 隨意填,Expiration 揀 No expiration,下面<b>淨係 tick「gist」</b>一格 → Generate token<br />
+          ① 開 <a href="https://github.com/settings/tokens" target="_blank" rel="noreferrer" style={{ color: 'var(--accent)' }}>github.com/settings/tokens</a> → 撳「Generate new token」,揀 <b>Tokens (classic)</b>(唔好用 fine-grained,佢唔支援 Gist)<br />
+          ② Note 隨意填,Expiration 揀 <b>No expiration</b>,下面<b>淨係 tick「gist」</b>一格 → Generate token<br />
           ③ 複製 ghp_... 貼入下面 → 撳「🔌 驗證 Token」→「⬆ 備份到 GitHub」<br />
           Token 只會存喺你部機瀏覽器,唔會上傳;之後「自動備份」一開,每次完成訓練就自動存上你個 GitHub。
         </p>
