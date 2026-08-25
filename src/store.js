@@ -3,10 +3,13 @@ const KEY = 'gymlog_v1';
 
 export const defaultState = () => ({
   workouts: [],      // [{id, date:'YYYY-MM-DD', name, exercises:[{exerciseId, name, muscle, sets:[{kg,reps}]}]}]
-  measurements: [],  // [{date, weight}]
+  measurements: [],  // [{date, weight, bodyFat?, chest?, waist?}]
+  photos: [],        // [{id, date, dataUrl}]
   templates: [],     // [{id, name, exercises:[{exerciseId, name, muscle}]}]
   customExercises: [], // [{id, zh, muscle, equipment}]
-  settings: { unit: 'kg' },
+  suppLog: {},       // { 'YYYY-MM-DD': ['肌酸', '蛋白粉'] }
+  suppList: ['蛋白粉', '肌酸', '魚油', '維他命D', '鋅鎂片', '咖啡因'],
+  settings: { unit: 'kg', goal: '增肌' },
 });
 
 export function loadState() {

@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react'
 import { exportCSV, parseCSV } from '../engine.js'
+import { GOALS } from '../aiCoach.js'
 
 export default function Settings({ ctx }) {
   const { state, setState, unit, showToast } = ctx
@@ -38,6 +39,18 @@ export default function Settings({ ctx }) {
   return (
     <div className="page">
       <header className="page-head"><h1>設定</h1></header>
+
+      <section className="card">
+        <h2>訓練目標 <span className="card-sub">AI 教練會跟住調整建議次數</span></h2>
+        <div className="seg">
+          {Object.keys(GOALS).map((g) => (
+            <button key={g} className={`seg-btn ${(state.settings.goal || '增肌') === g ? 'on' : ''}`} onClick={() => setState((s) => ({ ...s, settings: { ...s.settings, goal: g } }))}>
+              {g} <span className="small" style={{ opacity: 0.75 }}>({GOALS[g].reps})</span>
+            </button>
+          ))}
+        </div>
+        <p className="muted small" style={{ marginTop: 8 }}>{GOALS[state.settings.goal || '增肌']?.note}</p>
+      </section>
 
       <section className="card">
         <h2>單位</h2>

@@ -2,7 +2,7 @@
 // muscle: 胸 | 背 | 肩 | 二頭 | 三頭 | 股四頭 | 腿後側 | 臀 | 小腿 | 核心
 // equipment: 槓鈴 | 啞鈴 | 機械 | 纜繩 | 自重 | 壺鈴
 
-export const MUSCLES = ['胸', '背', '肩', '二頭', '三頭', '股四頭', '腿後側', '臀', '小腿', '核心'];
+export const MUSCLES = ['胸', '背', '肩', '二頭', '三頭', '股四頭', '腿後側', '臀', '小腿', '核心', '全身'];
 
 export const EXERCISES = [
   // 胸
@@ -83,6 +83,64 @@ export const EXERCISES = [
   // 全身
   { id: 'burpee', zh: '波比跳', en: 'Burpee', muscle: '核心', equipment: '自重' },
   { id: 'farmerwalk', zh: '農夫行走', en: 'Farmer\'s Walk', muscle: '背', equipment: '啞鈴' },
+  // 胸 — 擴充
+  { id: 'smithbench', zh: '史密斯臥推', en: 'Smith Machine Bench', muscle: '胸', equipment: '機械' },
+  { id: 'cablecross', zh: '交叉纜繩夾胸', en: 'Cable Crossover', muscle: '胸', equipment: '纜繩' },
+  { id: 'floorpress', zh: '地板臥推', en: 'Floor Press', muscle: '胸', equipment: '槓鈴' },
+  { id: 'singlecablefly', zh: '單臂纜繩夾胸', en: 'Single-arm Cable Fly', muscle: '胸', equipment: '纜繩' },
+  // 背 — 擴充
+  { id: 'reversechin', zh: '反握引體向上', en: 'Chin-up', muscle: '背', equipment: '自重' },
+  { id: 'australian', zh: '澳式划船', en: 'Australian Row', muscle: '背', equipment: '自重' },
+  { id: 'narrowlat', zh: '窄握高位下拉', en: 'Close-grip Lat Pulldown', muscle: '背', equipment: '機械' },
+  { id: 'trapdead', zh: '梯形槓硬舉', en: 'Trap Bar Deadlift', muscle: '背', equipment: '槓鈴' },
+  { id: 'smithrow', zh: '史密斯划船', en: 'Smith Machine Row', muscle: '背', equipment: '機械' },
+  { id: 'behindneck', zh: '頸後下拉', en: 'Behind-neck Pulldown', muscle: '背', equipment: '機械' },
+  { id: 'kbellsnatch', zh: '壺鈴抓舉', en: 'Kettlebell Snatch', muscle: '背', equipment: '壺鈴' },
+  // 肩 — 擴充
+  { id: 'machineohp', zh: '機械肩推', en: 'Machine Shoulder Press', muscle: '肩', equipment: '機械' },
+  { id: 'smithohp', zh: '史密斯肩推', en: 'Smith Machine OHP', muscle: '肩', equipment: '機械' },
+  { id: 'singlelaterals', zh: '單臂側平舉', en: 'Single-arm Lateral Raise', muscle: '肩', equipment: '啞鈴' },
+  { id: 'dbfront', zh: '啞鈴前平舉', en: 'DB Front Raise', muscle: '肩', equipment: '啞鈴' },
+  { id: 'kbellpress', zh: '壺鈴肩推', en: 'Kettlebell Press', muscle: '肩', equipment: '壺鈴' },
+  { id: 'kbellclean', zh: '壺鈴挺舉', en: 'Kettlebell Clean', muscle: '肩', equipment: '壺鈴' },
+  // 二頭 — 擴充
+  { id: 'reversecurl', zh: '反手彎舉', en: 'Reverse Curl', muscle: '二頭', equipment: '槓鈴' },
+  { id: 'inclinecurl', zh: '上斜啞鈴彎舉', en: 'Incline DB Curl', muscle: '二頭', equipment: '啞鈴' },
+  { id: 'spidercurl', zh: '蜘蛛彎舉', en: 'Spider Curl', muscle: '二頭', equipment: '啞鈴' },
+  { id: 'cablehammer', zh: '纜繩錘式彎舉', en: 'Cable Hammer Curl', muscle: '二頭', equipment: '纜繩' },
+  { id: 'zottman', zh: '佐特曼彎舉', en: 'Zottman Curl', muscle: '二頭', equipment: '啞鈴' },
+  // 三頭 — 擴充
+  { id: 'singlepushdown', zh: '單臂下壓', en: 'Single-arm Pushdown', muscle: '三頭', equipment: '纜繩' },
+  { id: 'reversepushdown', zh: '反手下壓', en: 'Reverse-grip Pushdown', muscle: '三頭', equipment: '纜繩' },
+  { id: 'narrowpushup', zh: '窄距伏地挺身', en: 'Diamond Push-up', muscle: '三頭', equipment: '自重' },
+  { id: 'machinepushdown', zh: '機械下壓', en: 'Machine Triceps Extension', muscle: '三頭', equipment: '機械' },
+  // 股四頭 — 擴充
+  { id: 'boxsquat', zh: '箱式深蹲', en: 'Box Squat', muscle: '股四頭', equipment: '槓鈴' },
+  { id: 'smithsquat', zh: '史密斯深蹲', en: 'Smith Machine Squat', muscle: '股四頭', equipment: '機械' },
+  { id: 'singlelegpress', zh: '單腿腿舉', en: 'Single-leg Leg Press', muscle: '股四頭', equipment: '機械' },
+  { id: 'stepup', zh: '登階', en: 'Step-up', muscle: '股四頭', equipment: '啞鈴' },
+  { id: 'jumpsquat', zh: '深蹲跳', en: 'Jump Squat', muscle: '股四頭', equipment: '自重' },
+  { id: 'boxjump', zh: '跳箱', en: 'Box Jump', muscle: '股四頭', equipment: '自重' },
+  // 腿後側 — 擴充
+  { id: 'nordic', zh: '北歐彎舉', en: 'Nordic Curl', muscle: '腿後側', equipment: '自重' },
+  { id: 'slidingcurl', zh: '滑腿彎舉', en: 'Sliding Leg Curl', muscle: '腿後側', equipment: '自重' },
+  { id: 'singlelegcurl', zh: '單腿腿彎舉', en: 'Single-leg Leg Curl', muscle: '腿後側', equipment: '機械' },
+  { id: 'goodmorning', zh: '早安體前屈', en: 'Good Morning', muscle: '腿後側', equipment: '槓鈴' },
+  // 臀 — 擴充
+  { id: 'singlehipthrust', zh: '單腿臀推', en: 'Single-leg Hip Thrust', muscle: '臀', equipment: '啞鈴' },
+  { id: 'donkeykick', zh: '驢踢腿', en: 'Donkey Kick', muscle: '臀', equipment: '自重' },
+  { id: 'clam', zh: '蚌殼式', en: 'Clamshell', muscle: '臀', equipment: '自重' },
+  // 小腿 — 擴充
+  { id: 'singlecalf', zh: '單腿提踵', en: 'Single-leg Calf Raise', muscle: '小腿', equipment: '啞鈴' },
+  { id: 'donkeycalf', zh: '驢式提踵', en: 'Donkey Calf Raise', muscle: '小腿', equipment: '機械' },
+  // 核心 — 擴充
+  { id: 'abwheel', zh: '腹輪', en: 'Ab Wheel Rollout', muscle: '核心', equipment: '自重' },
+  { id: 'deadbug', zh: '死蟲式', en: 'Dead Bug', muscle: '核心', equipment: '自重' },
+  { id: 'mountain', zh: '登山者', en: 'Mountain Climber', muscle: '核心', equipment: '自重' },
+  { id: 'dragonflag', zh: '龍旗', en: 'Dragon Flag', muscle: '核心', equipment: '自重' },
+  // 全身 — 擴充
+  { id: 'battleropes', zh: '戰繩', en: 'Battle Ropes', muscle: '全身', equipment: '自重' },
+  { id: 'sledpush', zh: '雪橇推', en: 'Sled Push', muscle: '全身', equipment: '機械' },
 ];
 
 export const EQUIPMENTS = ['槓鈴', '啞鈴', '機械', '纜繩', '自重', '壺鈴'];

@@ -383,6 +383,102 @@ const POSES = {
       <line x1="24" y1="33" x2="19" y2="38" {...S} /><line x1="24" y1="33" x2="29" y2="38" {...S} />
     </>
   ),
+  // 聳肩
+  shrug: (
+    <>
+      <Head />
+      <line x1="10" y1="14" x2="38" y2="14" {...S} />
+      <line x1="10" y1="14" x2="8" y2="20" {...S} /><line x1="38" y1="14" x2="40" y2="20" {...S} />
+      <Torso y1={18} y2={30} />
+      <line x1="24" y1="30" x2="24" y2="42" {...S} />
+      <line x1="24" y1="42" x2="19" y2="45" {...S} /><line x1="24" y1="42" x2="29" y2="45" {...S} />
+      <line x1="23" y1="18" x2="15" y2="22" {...S} /><line x1="25" y1="18" x2="33" y2="22" {...S} />
+      <line x1="15" y1="22" x2="15" y2="27" {...S} /><line x1="33" y1="22" x2="33" y2="27" {...S} />
+      <line x1="13" y1="27" x2="17" y2="27" {...S} /><line x1="31" y1="27" x2="35" y2="27" {...S} />
+    </>
+  ),
+  // 早安體前屈
+  goodmorning: (
+    <>
+      <Head x={29} y={8} />
+      <line x1="12" y1="6" x2="38" y2="6" {...S} />
+      <line x1="12" y1="6" x2="10" y2="12" {...S} /><line x1="38" y1="6" x2="40" y2="12" {...S} />
+      <line x1="17" y1="10" x2="32" y2="10" {...S} />
+      <Torso x1={27} y1={13} x2={19} y2={26} />
+      <line x1="19" y1="26" x2="15" y2="40" {...S} /><line x1="19" y1="26" x2="23" y2="36" {...S} />
+      <line x1="15" y1="40" x2="10" y2="40" {...S} />
+      <line x1="27" y1="13" x2="31" y2="17" {...S} /><line x1="31" y1="17" x2="35" y2="15" {...S} />
+    </>
+  ),
+  // 腹輪
+  abwheel: (
+    <>
+      <circle cx="24" cy="33" r="6" {...S} />
+      <circle cx="24" cy="33" r="2" {...S} />
+      <circle cx="24" cy="10" r="3.4" {...S} />
+      <line x1="24" y1="13" x2="24" y2="18" {...S} />
+      <line x1="24" y1="18" x2="15" y2="22" {...S} /><line x1="24" y1="18" x2="33" y2="22" {...S} />
+      <line x1="15" y1="22" x2="24" y2="33" {...S} /><line x1="33" y1="22" x2="24" y2="33" {...S} />
+    </>
+  ),
+  // 死蟲式
+  deadbug: (
+    <>
+      <line x1="8" y1="40" x2="40" y2="40" {...S} />
+      <circle cx="24" cy="34" r="3.4" {...S} />
+      <line x1="24" y1="37" x2="24" y2="27" {...S} />
+      <line x1="24" y1="27" x2="30" y2="23" {...S} /><line x1="24" y1="27" x2="18" y2="23" {...S} />
+      <line x1="30" y1="23" x2="34" y2="19" {...S} /><line x1="18" y1="23" x2="14" y2="19" {...S} />
+      <line x1="20" y1="40" x2="17" y2="43" {...S} /><line x1="28" y1="40" x2="31" y2="43" {...S} />
+    </>
+  ),
+  // 登山者
+  mountain: (
+    <>
+      <circle cx="24" cy="8" r="3.4" {...S} />
+      <line x1="24" y1="11" x2="24" y2="16" {...S} />
+      <line x1="24" y1="16" x2="12" y2="24" {...S} /><line x1="24" y1="16" x2="34" y2="22" {...S} />
+      <line x1="12" y1="24" x2="8" y2="38" {...S} /><line x1="34" y1="22" x2="38" y2="34" {...S} />
+      <line x1="24" y1="16" x2="28" y2="22" {...S} />
+      <line x1="28" y1="22" x2="31" y2="34" {...S} /><line x1="28" y1="22" x2="24" y2="34" {...S} />
+    </>
+  ),
+  // 登階
+  stepup: (
+    <>
+      <line x1="10" y1="38" x2="38" y2="38" {...S} />
+      <line x1="20" y1="38" x2="20" y2="30" {...S} /><line x1="20" y1="30" x2="38" y2="30" {...S} />
+      <Head x={26} y={9} />
+      <Torso x1={26} y1={14} x2={26} y2={26} />
+      <line x1="26" y1="26" x2="20" y2="32" {...S} /><line x1="26" y1="26" x2="31" y2="30" {...S} />
+      <line x1="20" y1="32" x2="19" y2="38" {...S} /><line x1="31" y1="30" x2="33" y2="34" {...S} />
+      <line x1="26" y1="16" x2="21" y2="21" {...S} /><line x1="26" y1="16" x2="31" y2="21" {...S} />
+    </>
+  ),
+  // 北歐彎舉
+  nordic: (
+    <>
+      <line x1="10" y1="10" x2="38" y2="10" {...S} />
+      <circle cx="24" cy="17" r="3.4" {...S} />
+      <line x1="24" y1="20" x2="24" y2="27" {...S} />
+      <line x1="24" y1="27" x2="24" y2="38" {...S} />
+      <line x1="24" y1="38" x2="19" y2="42" {...S} /><line x1="24" y1="38" x2="29" y2="42" {...S} />
+      <line x1="24" y1="20" x2="24" y2="23" {...S} />
+    </>
+  ),
+  // 跳箱
+  boxjump: (
+    <>
+      <line x1="14" y1="40" x2="40" y2="40" {...S} />
+      <line x1="24" y1="40" x2="24" y2="30" {...S} /><line x1="24" y1="30" x2="40" y2="30" {...S} />
+      <Head x={19} y={12} />
+      <Torso x1={19} y1={17} x2={19} y2={26} />
+      <line x1="19" y1="26" x2="13" y2="30" {...S} /><line x1="19" y1="26" x2="23" y2="30" {...S} />
+      <line x1="13" y1="30" x2="11" y2="38" {...S} /><line x1="23" y1="30" x2="24" y2="38" {...S} />
+      <line x1="19" y1="19" x2="14" y2="24" {...S} /><line x1="19" y1="19" x2="24" y2="24" {...S} />
+      <path d="M19 40 q-1 -4 0 -7" {...S} />
+    </>
+  ),
 }
 
 // 動作 → pose 對應
@@ -404,6 +500,21 @@ export const ICON_MAP = {
   calfraise: 'calf', seatedcalf: 'calf',
   crunch: 'crunch', cablecrunch: 'crunch', plank: 'plank', sideplank: 'plank',
   russiantwist: 'twist', hangingleg: 'legraise', legraise: 'legraise', burpee: 'pushup',
+  // 擴充動作映射
+  smithbench: 'bench', cablecross: 'fly', floorpress: 'bench', singlecablefly: 'fly',
+  reversechin: 'pullup', australian: 'row', narrowlat: 'pulldown', trapdead: 'deadlift',
+  smithrow: 'row', behindneck: 'pulldown', kbellsnatch: 'swing',
+  machineohp: 'ohp', smithohp: 'ohp', singlelaterals: 'laterals', dbfront: 'laterals',
+  kbellpress: 'ohp', kbellclean: 'swing',
+  reversecurl: 'curl', inclinecurl: 'curl', spidercurl: 'curl', cablehammer: 'curl', zottman: 'curl',
+  singlepushdown: 'pushdown', reversepushdown: 'pushdown', narrowpushup: 'pushup', machinepushdown: 'pushdown',
+  boxsquat: 'squat', smithsquat: 'squat', singlelegpress: 'legpress', stepup: 'stepup',
+  jumpsquat: 'squat', boxjump: 'boxjump',
+  nordic: 'nordic', slidingcurl: 'legcurl', singlelegcurl: 'legcurl', goodmorning: 'goodmorning',
+  singlehipthrust: 'hipthrust', donkeykick: 'kickback', clam: 'abductor',
+  singlecalf: 'calf', donkeycalf: 'calf',
+  abwheel: 'abwheel', deadbug: 'deadbug', mountain: 'mountain', dragonflag: 'legraise',
+  battleropes: 'swing', sledpush: 'generic',
 }
 
 // ExerciseIcon 組件:size 可選 sm/md/lg,animate 開關

@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import { EXERCISES } from '../exercises.js'
 import { exercisePRs, exerciseProgress } from '../engine.js'
+import ExerciseIcon from '../icons.jsx'
 
 function LineChart({ points, getY, fmt }) {
   const W = 560, H = 160, P = 8
@@ -49,10 +50,15 @@ export default function Progress({ ctx }) {
     <div className="page">
       <header className="page-head">
         <h1>進度</h1>
-        <select className="inp" value={id} onChange={(e) => setSel(e.target.value)} style={{ maxWidth: 260 }}>
-          {options.length === 0 && <option value="">—</option>}
-          {options.map((o) => <option key={o.id} value={o.id}>{o.zh}</option>)}
-        </select>
+        {id && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div className="ex-icon-wrap"><ExerciseIcon icon={id} size="md" /></div>
+            <select className="inp" value={id} onChange={(e) => setSel(e.target.value)} style={{ maxWidth: 260 }}>
+              {options.length === 0 && <option value="">—</option>}
+              {options.map((o) => <option key={o.id} value={o.id}>{o.zh}</option>)}
+            </select>
+          </div>
+        )}
       </header>
 
       {!id ? (
@@ -72,7 +78,9 @@ export default function Progress({ ctx }) {
             <h2>訓練紀錄 <span className="card-sub">{pts.length} 次</span></h2>
             <div className="hist-sets wrap">
               {pts.map((p, i) => (
-                <span key={i} className="hist-set wide" title={`${p.date}`}>{p.date.slice(5)} · 最高 {p.kg} kg · e1RM {p.e1rm}</span>
+                <span key={i} className="hist-set wide" title={`${p.date}`}>
+                  <ExerciseIcon icon={id} size="sm" className="gray" /> {p.date.slice(5)} · 最高 {p.kg} kg · e1RM {p.e1rm}
+                </span>
               ))}
             </div>
           </section>

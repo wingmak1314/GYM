@@ -6,6 +6,7 @@ import Workout from './components/Workout.jsx'
 import History from './components/History.jsx'
 import Progress from './components/Progress.jsx'
 import Measurements from './components/Measurements.jsx'
+import Supplements from './components/Supplements.jsx'
 import Settings from './components/Settings.jsx'
 
 const TABS = [
@@ -14,6 +15,7 @@ const TABS = [
   { id: 'history', zh: '歷史', icon: 'M12 2a10 10 0 100 20 10 10 0 000-20zm1 5h-2v6l5.2 3.1 1-1.7-4.2-2.5V7z' },
   { id: 'progress', zh: '進度', icon: 'M4 20V10m5.3 10V4m5.4 16v-7m5.3 7V7' },
   { id: 'measure', zh: '量測', icon: 'M12 3l7 4v5c0 4.4-3 8.6-7 10-4-1.4-7-5.6-7-10V7l7-4zm0 2.2L7 8.2V12c0 3.2 2.1 6.3 5 7.6 2.9-1.3 5-4.4 5-7.6V8.2l-5-3z' },
+  { id: 'supp', zh: '補劑', icon: 'M12 2a5 5 0 015 5v1h2v5h-2v7a3 3 0 01-3 3H10a3 3 0 01-3-3v-7H5V8h2V7a5 5 0 015-5zm0 2a3 3 0 00-3 3v1h6V7a3 3 0 00-3-3z' },
   { id: 'settings', zh: '設定', icon: 'M12 8a4 4 0 100 8 4 4 0 000-8zm9 4l2 1.5-2 1.5-.4 2.3 2.4 1-.9 2.4-2.5-.4-1.6 1.8-2.3-1-2.3 1-1.6-1.8-2.5.4-.9-2.4 2.4-1-.4-2.3L1 13.5 3 12l-2-1.5 2-1.5.4-2.3-2.4-1 .9-2.4 2.5.4L6 1.9 8.3 3l2.3-1 2.3 1L14.5 1.9l1.6 1.8 2.5-.4.9 2.4-2.4 1 .4 2.3L21 10.5 23 12z' },
 ]
 
@@ -110,6 +112,26 @@ export default function App() {
     return ex
   }
 
+  const toggleSupp = (date, name) => {
+    setState((s) => {
+      const day = [...(s.suppLog[date] || [])]
+      const i = day.indexOf(name)
+      if (i >= 0) day.splice(i, 1); else day.push(name)
+      return { ...s, suppLog: { ...s.suppLog, [date]: day } }
+    })
+  }
+
+  const addSupp = (name) => {
+    setState((s) => (s.suppList.includes(name) ? s : { ...s, suppList: [...s.suppList, name] }))
+  }
+
+  const addPhoto = (photo) => {
+    setState((s) => ({ ...s, photos: [...(s.photos || []), photo] }))
+  }
+  const deletePhoto = (id) => {
+    setState((s) => ({ ...s, photos: (s.photos || []).filter((p) => p.id !== id) }))
+  }
+
   const stats = useMemo(() => {
     const now = new Date(); now.setHours(0, 0, 0, 0)
     const dow = (now.getDay() + 6) % 7
@@ -122,7 +144,7 @@ export default function App() {
     return { sessions, vol: Math.round(vol), sets, reps }
   }, [state.workouts])
 
-  const ctx = { state, setState, unit, fmt, toKg, showToast, tab, setTab, activeWorkout, setActiveWorkout, startWorkout, saveWorkout, deleteWorkout, addMeasurement, deleteMeasurement, saveTemplate, addCustomExercise, stats, todayStr }
+  const ctx = { state, setState, unit, fmt, toKg, showToast, tab, setTab, activeWorkout, setActiveWorkout, startWorkout, saveWorkout, deleteWorkout, addMeasurement, deleteMeasurement, saveTemplate, addCustomExercise, toggleSupp, addSupp, addPhoto, deletePhoto, stats, todayStr }
 
   return (
     <div className="app">
@@ -163,6 +185,7 @@ export default function App() {
         {tab === 'history' && <History ctx={ctx} />}
         {tab === 'progress' && <Progress ctx={ctx} />}
         {tab === 'measure' && <Measurements ctx={ctx} />}
+        {tab === 'supp' && <Supplements ctx={ctx} />}
         {tab === 'settings' && <Settings ctx={ctx} />}
       </main>
 

@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import { buildHeatmap, weeklyVolume, muscleDistribution, detectPR, epley, workoutVolume, workoutSets } from '../engine.js'
-import { suggestToday } from '../aiCoach.js'
+import { suggestToday, computeAchievements, GOALS } from '../aiCoach.js'
 import ExerciseIcon from '../icons.jsx'
 import { EXERCISES } from '../exercises.js'
 
@@ -98,6 +98,8 @@ function RecentPRs({ state }) {
 function AiCoachCard({ state }) {
   const reco = useMemo(() => suggestToday(state), [state])
   const ex = EXERCISES.find((e) => e.id === reco.exId)
+  const goal = GOALS[state.settings.goal] || GOALS['增肌']
+  const achievements = useMemo(() => computeAchievements(state), [state])
   const sTier = useMemo(() => {
     const S = ['squat', 'bench', 'deadlift', 'ohp', 'pullup', 'hipthrust']
     return S.map((id) => ({ id, zh: (EXERCISES.find((e) => e.id === id) || {}).zh || id }))
@@ -106,7 +108,7 @@ function AiCoachCard({ state }) {
     <section className="card ai-card">
       <div className="ai-head">
         <span className="ai-badge"><span className="dot" /> AI 教練 · 2026</span>
-        <span className="card-sub">基於你嘅訓練紀錄動態分析</span>
+        <span className="card-sub">目標:{state.settings.goal || '增肌'} · 建議次數 {goal.reps} · {goal.note}</span>
       </div>
       <div className="ai-row">
         <div className="ai-reco">
@@ -128,6 +130,13 @@ function AiCoachCard({ state }) {
           ))}
         </div>
       </div>
+      {achievements.length > 0 && (
+        <div className="ach-row">
+          {achievements.map((a, i) => (
+            <span key={i} className="ach-item" title={a.desc}><span>{a.icon}</span> {a.name}</span>
+          ))}
+        </div>
+      )}
     </section>
   )
 }

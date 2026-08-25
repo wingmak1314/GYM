@@ -1,10 +1,50 @@
-import React, { useMemo, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { EXERCISES, MUSCLES } from '../exercises.js'
 import { detectPR, lastWorkoutFor, workoutVolume, workoutSets, workoutReps } from '../engine.js'
-import { valueTier, suggestNextWeight, PLANS } from '../aiCoach.js'
+import { valueTier, suggestNextWeight, PLANS, formCues } from '../aiCoach.js'
 import ExerciseIcon from '../icons.jsx'
 
 const PR_TYPE = { weight: '重量PR', e1rm: '1RM PR', volume: '量PR' }
+
+// ── 組間休息計時器 ──
+function RestTimer({ timer, setTimer }) {
+  useEffect(() => {
+    if (!timer.running || timer.seconds <= 0) return
+    const t = setInterval(() => setTimer((s) => ({ ...s, seconds: s.seconds - 1 })), 1000)
+    return () => clearInterval(t)
+  }, [timer.running, timer.seconds, setTimer])
+
+  useEffect(() => {
+    if (timer.seconds === 0 && timer.running) {
+      setTimer((s) => ({ ...s, running: false }))
+      if (navigator.vibrate) navigator.vibrate([200, 100, 200])
+    }
+  }, [timer.seconds, timer.running, setTimer])
+
+  const total = timer.total || 90
+  const pct = Math.max(0, (timer.seconds / total) * 100)
+  const mm = String(Math.floor(timer.seconds / 60)).padStart(2, '0')
+  const ss = String(timer.seconds % 60).padStart(2, '0')
+
+  return (
+    <div className={`rest-timer ${timer.running ? 'running' : ''} ${timer.seconds === 0 && timer.total ? 'done' : ''}`}>
+      <div className="rest-info">
+        <span className="rest-label">{timer.running ? '⏱ 休息中' : timer.seconds === 0 && timer.total ? '✅ 休息完 — 開下一組!' : '⏱ 組間休息計時器'}</span>
+        <span className="rest-time">{mm}:{ss}</span>
+      </div>
+      <div className="rest-bar"><div className="rest-bar-fill" style={{ width: `${pct}%` }} /></div>
+      <div className="rest-presets">
+        {[60, 90, 120, 180].map((s) => (
+          <button key={s} className={`rest-chip ${timer.total === s ? 'on' : ''}`} onClick={() => setTimer({ running: false, seconds: s, total: s })}>{s}s</button>
+        ))}
+        <button className="rest-chip go" onClick={() => setTimer((s) => ({ ...s, running: !s.running, seconds: s.seconds || s.total || 90, total: s.total || 90 }))}>
+          {timer.running ? '⏸' : '▶'}
+        </button>
+        <button className="rest-chip" onClick={() => setTimer({ running: false, seconds: 0, total: 0 })}>✕</button>
+      </div>
+    </div>
+  )
+}
 
 function SetRow({ ctx, ex, exIdx, setIdx, set, refs }) {
   const { state, toKg } = ctx
@@ -75,8 +115,10 @@ function SetRow({ ctx, ex, exIdx, setIdx, set, refs }) {
 
 function ExerciseBlock({ ctx, ex, exIdx, refs }) {
   const { state, setActiveWorkout } = ctx
+  const [showCues, setShowCues] = useState(false)
   const last = lastWorkoutFor(state.workouts, ex.exerciseId)
   const suggest = suggestNextWeight(last)
+  const cues = formCues(ex.exerciseId, ex.muscle)
   const addSet = () => {
     const prev = ex.sets.length ? ex.sets[ex.sets.length - 1] : { kg: '', reps: '' }
     setActiveWorkout((w) => {
@@ -114,6 +156,14 @@ function ExerciseBlock({ ctx, ex, exIdx, refs }) {
           💡 AI:{suggest.reason} — 撳一下加入
         </button>
       )}
+      <button className="cues-toggle" onClick={() => setShowCues(!showCues)}>
+        📋 動作提示 {showCues ? '▴' : '▾'}
+      </button>
+      {showCues && (
+        <ul className="cues-list">
+          {cues.map((c, i) => <li key={i}>{i + 1}. {c}</li>)}
+        </ul>
+      )}
       <div className="sets">
         {(ex.sets || []).map((s, j) => (
           <SetRow key={j} ctx={ctx} ex={ex} exIdx={exIdx} setIdx={j} set={s} refs={refs} />
@@ -134,6 +184,7 @@ export default function Workout({ ctx }) {
   const [customName, setCustomName] = useState('')
   const [customMuscle, setCustomMuscle] = useState('胸')
   const [libOpen, setLibOpen] = useState(false)
+  const [timer, setTimer] = useState({ running: false, seconds: 0, total: 0 })
   const refs = useRef({})
 
   const library = useMemo(() => {
@@ -271,6 +322,7 @@ export default function Workout({ ctx }) {
       <div className="workout-layout">
         {libPanel}
         <div className="workout-main">
+          <RestTimer timer={timer} setTimer={setTimer} />
           <button className="lib-open-btn" onClick={() => setLibOpen(!libOpen)}>
             {libOpen ? '▾ 收埋動作庫' : `＋ 動作庫 (已加 ${activeWorkout.exercises.length} 個動作)`}
           </button>

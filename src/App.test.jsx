@@ -69,13 +69,28 @@ describe('GymLog 完整流程', () => {
     expect(screen.getByText('未有動作數據')).toBeTruthy()
   })
 
+  it('補劑追蹤:撳一下打勾,寫入 localStorage', () => {
+    render(<App />)
+    click(screen.getAllByText('補劑')[0])
+    expect(screen.getByText('今日清單')).toBeTruthy()
+    // 第一個「蛋白粉」= 今日清單按鈕(小知識段落都有同名)
+    click(screen.getAllByText('蛋白粉')[0])
+    const stored = JSON.parse(localStorage.getItem('gymlog_v1'))
+    const today = new Date()
+    const key = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
+    expect(stored.suppLog[key]).toContain('蛋白粉')
+    // 再撳一次取消
+    click(screen.getAllByText('蛋白粉')[0])
+    expect(JSON.parse(localStorage.getItem('gymlog_v1')).suppLog[key]).not.toContain('蛋白粉')
+  })
+
   it('量測紀錄', () => {
     render(<App />)
     click(screen.getAllByText('量測')[0])
     const w = screen.getByPlaceholderText('體重 (kg)')
     fireEvent.change(w, { target: { value: '75.5' } })
     click(screen.getByText('✓ 紀錄'))
-    expect(screen.getByText('75.5 kg')).toBeTruthy()
+    expect(screen.getByText('體重 75.5kg')).toBeTruthy()
   })
 
   it('CSV 匯出內容正確', () => {
