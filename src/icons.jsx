@@ -515,6 +515,25 @@ export const ICON_MAP = {
   singlecalf: 'calf', donkeycalf: 'calf',
   abwheel: 'abwheel', deadbug: 'deadbug', mountain: 'mountain', dragonflag: 'legraise',
   battleropes: 'swing', sledpush: 'generic',
+  // 第三批映射
+  smithincline: 'bench', declinebench: 'bench', widepushup: 'pushup', bandfly: 'fly',
+  tbarrow: 'row', mechrow: 'row', reverseRow: 'row', straightarmfly: 'fly', towelchin: 'pullup',
+  dbshrug: 'shrug', bbshrug: 'shrug', machinelateral: 'laterals', cablelateral: 'laterals',
+  pike: 'ohp', handstand: 'ohp', inclinebbcurl: 'curl', machinecurl: 'curl', kbellcurl: 'curl',
+  dbskull: 'ohdbext', benchdips: 'dips', bandpushdown: 'pushdown', machineext: 'pushdown',
+  zercher: 'squat', pistol: 'squat', smithlunge: 'lunge', bandsquat: 'squat',
+  sumodead: 'deadlift', swisscurl: 'legcurl', bandcurl: 'legcurl',
+  smiththrust: 'hipthrust', bandbridge: 'hipthrust', kbsumodead: 'swing',
+  legpresscalf: 'calf', bandcalf: 'calf',
+  medball: 'swing', woodchop: 'twist', birddog: 'deadbug', plankknee: 'plank', sidecrunch: 'crunch',
+  medballsquat: 'swing', ropejump: 'generic', rower: 'generic', bike: 'generic', treadmill: 'generic',
+  // 第四批 (2026 research) 映射
+  thrusters: 'ohp', dbthrusters: 'ohp', wallball: 'swing', sandbagcarry: 'carry', sledpull: 'generic',
+  skierg: 'generic', burpeebroad: 'pushup', assaultbike: 'generic', turkishgetup: 'generic', rucking: 'carry',
+  elliptical: 'generic', stairclimber: 'generic', inclinewalk: 'generic', swim: 'generic',
+  pallof: 'twist', bearcrawl: 'plank', deadhang: 'pullup', cossack: 'squat',
+  bandedwalk: 'abductor', reversehyper: 'hipthrust', bandpullapart: 'laterals',
+  deficitdead: 'deadlift', pausesquat: 'squat', jefferson: 'deadlift',
 }
 
 // ExerciseIcon 組件:size 可選 sm/md/lg,animate 開關

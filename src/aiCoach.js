@@ -6,15 +6,15 @@
 const TIERS = {
   S: {
     color: '#c7f546', label: 'S · 頂級回報', note: '複合大動作,多肌群+高神經刺激,練一抵三',
-    ids: ['squat', 'deadlift', 'bench', 'ohp', 'pullup', 'bbrow', 'hipthrust', 'frontsquat', 'dips', 'pushup', 'kbellswing'],
+    ids: ['squat', 'deadlift', 'bench', 'ohp', 'pullup', 'bbrow', 'hipthrust', 'frontsquat', 'dips', 'pushup', 'kbellswing', 'trapdead', 'reversechin', 'boxsquat', 'kbellclean'],
   },
   A: {
     color: '#4db8ff', label: 'A · 高性價比', note: '主要複合動作,覆蓋大肌群,穩健增長',
-    ids: ['rdl', 'legpress', 'latpull', 'searow', 'ibench', 'dbohp', 'bulgarian', 'lunge', 'hacksquat', 'goblet', 'idbench', 'dbbench', 'dbrow', 'incline', 'pullup', 'tricepsdips', 'farmerwalk'],
+    ids: ['rdl', 'legpress', 'latpull', 'searow', 'ibench', 'dbohp', 'bulgarian', 'lunge', 'hacksquat', 'goblet', 'idbench', 'dbbench', 'dbrow', 'incline', 'pullup', 'tricepsdips', 'farmerwalk', 'thrusters', 'dbthrusters', 'turkishgetup', 'cossack', 'pausesquat', 'deficitdead', 'sumodead', 'zercher', 'tbarrow', 'trapdead', 'reversechin', 'boxsquat', 'kbellclean', 'pistol'],
   },
   B: {
     color: '#ff9f43', label: 'B · 輔助動作', note: '單關節/機械,適合補弱點同泵感',
-    ids: ['pecdeck', 'cablefly', 'laterals', 'pushdown', 'ropedown', 'bbcurl', 'dbcurl', 'legcurl', 'legext', 'calfraise', 'decline', 'preacher', 'hammer', 'seatedcurl', 'seatedcalf', 'cablecrunch', 'russiantwist', 'hangingleg', 'legraise', 'plank', 'crunch', 'arnold', 'latraise', 'uprightrow', 'facelift', 'reardelt'],
+    ids: ['pecdeck', 'cablefly', 'laterals', 'pushdown', 'ropedown', 'bbcurl', 'dbcurl', 'legcurl', 'legext', 'calfraise', 'decline', 'preacher', 'hammer', 'seatedcurl', 'seatedcalf', 'cablecrunch', 'russiantwist', 'hangingleg', 'legraise', 'plank', 'crunch', 'arnold', 'latraise', 'uprightrow', 'facelift', 'reardelt', 'wallball', 'pallof', 'rower', 'bike', 'treadmill', 'elliptical', 'stairclimber', 'swim', 'skierg', 'assaultbike', 'inclinewalk', 'ropejump', 'sledpush', 'sledpull', 'sandbagcarry', 'rucking', 'burpeebroad', 'medballsquat', 'medball', 'woodchop', 'pike', 'handstand', 'dbshrug', 'bbshrug', 'machinelateral', 'cablelateral', 'bandpullapart', 'deadhang', 'bearcrawl', 'bandedwalk', 'reversehyper'],
   },
   C: {
     color: '#8b919c', label: 'C · 低刺激', note: '小肌群/特殊角度,錦上添花',
@@ -196,6 +196,40 @@ const GENERIC_CUES = {
 export function formCues(exerciseId, muscle) {
   const list = FORM_CUES[exerciseId] || GENERIC_CUES[muscle] || GENERIC_CUES['全身']
   return list.slice(0, 3)
+}
+
+// ---- 做法 (S 級動作逐步教學) ----
+export const HOW_TO = {
+  squat: ['企位:腳同膊闊,腳尖微微向外 15°', '槓鈴放斜方肌上,手唔好托槓', '吸氣收腹,胸口挺起,臀向後向下坐', '落:膝蓋對腳尖,大脾去到水平或以下', '起身:腳踩實地面,臀先發力企直', '頂點鎖定,呼氣,準備下一組'],
+  deadlift: ['企位:腳喺槓下,脛骨離槓約兩指', '握槓:膊頭闊,手臂垂直,肩胛喺槓正上方', '背脊挺直,胸口挺起,臀下沉(死拉位)', '第一步:腿推地,槓貼住脛骨向上', '槓過膝:臀同背同時發力,站直', '鎖死:收臀企直,唔好後仰,然後控住落'],
+  bench: ['躺實,眼喺槓正下方,肩胛收緊貼凳', '握槓:膊頭闊,手腕垂直', '腳踩實地面,臀微拱,肩胛鎖實', '落槓:控制到胸口,手肘約 45°', '推:腳踩地+胸發力,槓直上', '頂點鎖手肘,肩胛保持收緊'],
+  ohp: ['企位:腳同膊闊,收緊臀同腹', '握槓:膊頭闊,槓放鎖骨位', '前臂垂直地面,手肘微前', '推:槓由鎖骨直上,頭微微向後讓槓', '過頭後頭歸位,全程核心鎖實', '頂點鎖定,控住落返鎖骨'],
+  pullup: ['跳起抓槓:手闊過膊,全臂伸直', '肩胛先下沉(唔係拉手)', '胸口帶上,拉至鎖骨過槓', '頂點停 1 秒', '落返:控制 3 秒全伸展', '做唔到就做澳式划船/彈力帶輔助'],
+  bbrow: ['企位:腳同膊闊,膝微曲,上身前傾 45°', '背脊全程挺直,腰唔好圓', '握槓:膊頭闊,槓垂喺膝前', '拉:手肘向後帶,槓拉向肚臍', '頂點夾實肩胛 1 秒', '控住落返,保持上身角度'],
+  hipthrust: ['上背(肩胛)貼實凳邊', '槓墊軟墊放喺髖骨位,腳踩實', '下巴收,核心鎖實', '臀發力推到頂,上身成直線', '頂點收緊臀 2 秒', '控住落返,全程臀受力'],
+  rdl: ['企位:腳同膊闊,膝微曲', '握槓:膊頭闊,貼住大脾', '臀向後推,槓貼住大脾滑落', '落:感覺腿後側拉扯,背脊挺直', '到拉扯點(約膝下),臀發力站直', '全程槓貼身,唔好圓背'],
+  trapdead: ['企位:企喺梯形槓中間', '握柄:手臂垂直,腰背挺直', '臀下沉,胸口挺起(同硬舉準備一樣)', '腿推地,槓離地', '站直收臀鎖死', '新手首選硬舉變體:對腰更友好'],
+  dips: ['雙手撐柄,手臂伸直鎖定', '身體微前傾,胸口向下', '落:手肘 45° 向後,胸落到手柄水平', '推返起身,唔好搖', '頂點鎖手肘', '做唔到用輔助機/彈力帶'],
+  pushup: ['手掌撐實,手略闊過膊', '身體成一直線,收緊臀腹', '落:胸口到近地,手肘 45°', '推返起身,唔好塌腰', '頂點伸直,保持張力', '做唔到用膝蓋/斜牆'],
+  kbellswing: ['壺鈴放雙腿之間,腳闊過膊', '微蹲,雙手抓壺鈴', '臀發力站直,壺鈴向前甩到胸口高', '壺鈴自然回落,屈膝收壺鈴', '全程腰背挺直,手臂放鬆', '節奏:臀驅動,唔係手拉'],
+  lunge: ['企直,雙手持啞鈴', '前腳踏出,後膝向地', '落:前膝對腳尖,後膝近地', '前腳掌發力推返', '企直換腳', '核心鎖實,上身全程挺直'],
+  latpull: ['坐實,大腿鎖實墊', '握槓:闊過膊,胸口挺起', '肩胛下沉,槓拉向鎖骨', '手肘指向地面', '頂點夾實背肌 1 秒', '控住伸直手臂,保持張力'],
+  legpress: ['坐實,腰貼椅背', '腳掌全踩平台,膝對腳尖', '放:控制膝蓋向胸口', '推:腳掌發力,唔好鎖死膝蓋', '頂點停 1 秒', '全程腰貼實,唔好抬臀'],
+  plank: ['手肘正喺膊頭下', '身體成直線,收緊臀腹', '呼吸保持,唔好憋氣', '肩胛穩定,唔好塌腰', '目標 30–60 秒', '斜板/膝蓋版做唔到就減時間'],
+  reversechin: ['跳起反手握槓(掌心向自己)', '手同膊闊,肩胛下沉', '胸口帶上,拉至下巴過槓', '頂點停 1 秒', '控住落返全伸展', '比正手引體易,新手練背首選'],
+  kbellclean: ['壺鈴放雙腿之間,微蹲', '快速站直,同時手臂上拉', '壺鈴翻到肩前,手肘收', '前臂垂直,壺鈴穩喺肩前', '控住落返雙腿之間', '動力來自臀腿,唔係手臂'],
+  boxsquat: ['箱放喺深蹲深度位置', '準備同深蹲一樣,槓放斜方肌', '落:控住坐到箱上(唔好彈起)', '停 1 秒,重新啟動', '臀發力企直', '練深蹲底部力量同姿勢'],
+  thrusters: ['槓鈴放鎖骨位(前蹲姿勢)', '蹲落:膝對腳尖,背挺直', '起身同時將槓推過頭', '頂點手臂伸直,核心鎖實', '落返鎖骨位再蹲', 'Hyrox 王牌動作:全身+心肺一次過'],
+  turkishgetup: ['壺鈴舉直過頭,眼盯壺鈴', '手肘撐地起身,再手掌撐地', '臀離地,後腳穿過去變半跪', '半跪起身企直', '全程壺鈴保持垂直過頭', '反向逐步落返,慢做'],
+  wallball: ['藥球抱喺胸前,蹲落', '起身時將球擲向高處目標', '接球屈膝卸力', '連續做,節奏快', '目標:男 9kg 女 6kg 擲 3m', 'Hyrox 經典項目'],
+  cossack: ['企闊,腳尖向外', '重心移去一邊,另一邊腳伸直', '坐低嗰邊臀向後,背挺直', '腳跟踩實,起身', '換邊', '練髖關節活動度+大腿內側'],
+  pallof: ['纜繩/彈力帶喺身側', '雙手伸直握喺胸前', '對抗拉力,唔好俾身體轉', '推前停 1 秒', '慢慢收回', '核心抗旋轉之王'],
+  deadhang: ['跳起抓槓,全臂伸直', '肩胛放鬆,身體自然垂低', '收緊核心,保持呼吸', '目標 30–60 秒', '每週加 5 秒', '護肩+拉闊背肌+強化握力'],
+  pausesquat: ['同深蹲一樣準備', '落到底停 2–3 秒', '保持張力,唔好彈', '再爆發起身', '練底部力量同姿勢穩定性', '進階深蹲專項'],
+}
+
+export function howTo(exerciseId, muscle) {
+  return HOW_TO[exerciseId] || formCues(exerciseId, muscle)
 }
 
 // ---- 成就系統 (本地版「社區/動力」) ----

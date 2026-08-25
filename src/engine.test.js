@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import {
   epley, setVolume, workoutVolume, workoutSets, workoutReps,
   detectPR, lastWorkoutFor, buildHeatmap, weeklyVolume, muscleDistribution,
-  exerciseProgress, exportCSV, parseCSV,
+  exerciseProgress, exportCSV, parseCSV, cumulativeVolume, weeklyFrequency,
 } from './engine.js'
 
 const wk = (date, exercises) => ({ id: date, date, name: 't', exercises })
@@ -77,6 +77,26 @@ describe('進度點', () => {
     const p = exerciseProgress(ws, 'squat')
     expect(p.map((x) => x.date)).toEqual(['2026-08-01', '2026-08-10'])
     expect(p[1].kg).toBe(80)
+  })
+})
+
+describe('累積訓練量 / 頻率', () => {
+  it('累積量順日期遞增', () => {
+    const ws = [
+      wk('2026-08-01', [{ exerciseId: 'bench', name: 'x', muscle: '胸', sets: [{ kg: 100, reps: 5 }] }]),
+      wk('2026-08-10', [{ exerciseId: 'bench', name: 'x', muscle: '胸', sets: [{ kg: 100, reps: 5 }] }]),
+    ]
+    const c = cumulativeVolume(ws)
+    expect(c).toHaveLength(2)
+    expect(c[0].vol).toBe(500)
+    expect(c[1].vol).toBe(1000)
+    expect(c[1].vol).toBeGreaterThan(c[0].vol)
+  })
+  it('每週頻率 = 每週訓練次數', () => {
+    const t = new Date()
+    const iso = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`
+    const f = weeklyFrequency([wk(iso, [])], 12)
+    expect(f[f.length - 1].sessions).toBe(1)
   })
 })
 

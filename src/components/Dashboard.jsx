@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { buildHeatmap, weeklyVolume, muscleDistribution, detectPR, epley, workoutVolume, workoutSets } from '../engine.js'
+import { buildHeatmap, weeklyVolume, muscleDistribution, detectPR, epley, workoutVolume, workoutSets, cumulativeVolume, weeklyFrequency } from '../engine.js'
 import { suggestToday, computeAchievements, GOALS } from '../aiCoach.js'
 import ExerciseIcon from '../icons.jsx'
 import { EXERCISES } from '../exercises.js'
@@ -141,9 +141,54 @@ function AiCoachCard({ state }) {
   )
 }
 
+// 累積訓練量 area chart
+function AreaChart({ data }) {
+  const W = 560, H = 150, P = 10
+  if (data.length < 2) return <div className="empty-note">需要至少 2 次訓練先有圖</div>
+  const max = Math.max(...data.map((d) => d.vol)) * 1.05 || 1
+  const x = (i) => P + (i * (W - P * 2)) / (data.length - 1)
+  const y = (v) => H - P - (v / max) * (H - P * 2)
+  const line = data.map((d, i) => `${x(i)},${y(d.vol)}`).join(' ')
+  const area = `${line} ${x(data.length - 1)},${H - P} ${x(0)},${H - P}`
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="linechart" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="volg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#c7f531" stopOpacity="0.35" />
+          <stop offset="1" stopColor="#c7f531" stopOpacity="0.02" />
+        </linearGradient>
+      </defs>
+      <polygon points={area} fill="url(#volg)" />
+      <polyline points={line} fill="none" stroke="#c7f531" strokeWidth="2" />
+      {data.map((d, i) => i % Math.ceil(data.length / 8) === 0 || i === data.length - 1 ? (
+        <circle key={i} cx={x(i)} cy={y(d.vol)} r="2.5" fill="#c7f531"><title>{`${d.date}: ${d.vol.toLocaleString()} kg`}</title></circle>
+      ) : null)}
+    </svg>
+  )
+}
+
+// 每週頻率 line chart
+function FreqChart({ data }) {
+  const W = 560, H = 150, P = 10
+  const max = Math.max(1, ...data.map((d) => d.sessions))
+  const x = (i) => P + (i * (W - P * 2)) / Math.max(1, data.length - 1)
+  const y = (v) => H - P - (v / max) * (H - P * 2)
+  const line = data.map((d, i) => `${x(i)},${y(d.sessions)}`).join(' ')
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="linechart" preserveAspectRatio="none">
+      {data.map((d, i) => (
+        <circle key={i} cx={x(i)} cy={y(d.sessions)} r="3" fill="#1fcefd"><title>{`${d.label} 週: ${d.sessions} 次`}</title></circle>
+      ))}
+      <polyline points={line} fill="none" stroke="#1fcefd" strokeWidth="2" strokeDasharray="4 3" />
+    </svg>
+  )
+}
+
 export default function Dashboard({ ctx }) {
   const { state, fmt, stats, startWorkout } = ctx
   const vols = weeklyVolume(state.workouts, 12)
+  const cumVol = cumulativeVolume(state.workouts)
+  const freq = weeklyFrequency(state.workouts, 12)
   const muscles = muscleDistribution(state.workouts, 7)
   const muscleRows = Object.entries(muscles).sort((a, b) => b[1] - a[1])
   const maxSets = Math.max(1, ...muscleRows.map(([, n]) => n))
@@ -182,12 +227,23 @@ export default function Dashboard({ ctx }) {
               {muscleRows.map(([m, n]) => (
                 <div key={m} className="m-row">
                   <span className="m-name" style={{ color: MUSCLE_COLORS[m] || '#fff' }}>{m}</span>
-                  <div className="m-track"><div className="m-bar" style={{ width: `${(n / maxSets) * 100}%`, background: MUSCLE_COLORS[m] || '#c7f546' }} /></div>
+                  <div className="m-track"><div className="m-bar" style={{ width: `${(n / maxSets) * 100}%`, background: MUSCLE_COLORS[m] || '#c7f531' }} /></div>
                   <span className="m-n">{n}</span>
                 </div>
               ))}
             </div>
           ) : <div className="empty-note">未有資料</div>}
+        </section>
+      </div>
+
+      <div className="grid-2">
+        <section className="card">
+          <h2>累積訓練量 <span className="card-sub">總 kg 走勢</span></h2>
+          <AreaChart data={cumVol} />
+        </section>
+        <section className="card">
+          <h2>每週訓練頻率 <span className="card-sub">近 12 週 · 次數</span></h2>
+          <FreqChart data={freq} />
         </section>
       </div>
 

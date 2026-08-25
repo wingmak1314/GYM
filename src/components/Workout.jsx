@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { EXERCISES, MUSCLES } from '../exercises.js'
 import { detectPR, lastWorkoutFor, workoutVolume, workoutSets, workoutReps } from '../engine.js'
-import { valueTier, suggestNextWeight, PLANS, formCues } from '../aiCoach.js'
+import { valueTier, suggestNextWeight, PLANS, formCues, howTo } from '../aiCoach.js'
+import { PLANS_300 } from '../planGen.js'
 import ExerciseIcon from '../icons.jsx'
 
 const PR_TYPE = { weight: '重量PR', e1rm: '1RM PR', volume: '量PR' }
@@ -118,7 +119,7 @@ function ExerciseBlock({ ctx, ex, exIdx, refs }) {
   const [showCues, setShowCues] = useState(false)
   const last = lastWorkoutFor(state.workouts, ex.exerciseId)
   const suggest = suggestNextWeight(last)
-  const cues = formCues(ex.exerciseId, ex.muscle)
+  const steps = howTo(ex.exerciseId, ex.muscle)
   const addSet = () => {
     const prev = ex.sets.length ? ex.sets[ex.sets.length - 1] : { kg: '', reps: '' }
     setActiveWorkout((w) => {
@@ -157,12 +158,12 @@ function ExerciseBlock({ ctx, ex, exIdx, refs }) {
         </button>
       )}
       <button className="cues-toggle" onClick={() => setShowCues(!showCues)}>
-        📋 動作提示 {showCues ? '▴' : '▾'}
+        📋 做法教學 {showCues ? '▴' : '▾'}
       </button>
       {showCues && (
-        <ul className="cues-list">
-          {cues.map((c, i) => <li key={i}>{i + 1}. {c}</li>)}
-        </ul>
+        <ol className="cues-list">
+          {steps.map((c, i) => <li key={i}>{i + 1}. {c}</li>)}
+        </ol>
       )}
       <div className="sets">
         {(ex.sets || []).map((s, j) => (
@@ -185,6 +186,21 @@ export default function Workout({ ctx }) {
   const [customMuscle, setCustomMuscle] = useState('胸')
   const [libOpen, setLibOpen] = useState(false)
   const [timer, setTimer] = useState({ running: false, seconds: 0, total: 0 })
+  const [planQ, setPlanQ] = useState('')
+  const [planLevel, setPlanLevel] = useState('')
+  const [planGoal, setPlanGoal] = useState('')
+  const [planDays, setPlanDays] = useState('')
+  const [planShown, setPlanShown] = useState(12)
+  const allPlans = useMemo(() => [...PLANS, ...PLANS_300], [])
+  const filteredPlans = useMemo(() => {
+    const q = planQ.trim().toLowerCase()
+    return allPlans.filter((p) =>
+      (!planLevel || p.level === planLevel) &&
+      (!planGoal || p.goal === planGoal) &&
+      (!planDays || String(p.days) === planDays) &&
+      (!q || p.name.toLowerCase().includes(q) || (p.desc || '').toLowerCase().includes(q))
+    )
+  }, [allPlans, planQ, planLevel, planGoal, planDays])
   const refs = useRef({})
 
   const library = useMemo(() => {
@@ -203,22 +219,48 @@ export default function Workout({ ctx }) {
       <div className="page">
         <header className="page-head"><h1>訓練</h1></header>
         <section className="card">
-          <h2>🏋️ AI 訓練計劃庫 <span className="card-sub">撳計劃即開,全部係 2026 最高性價比編排</span></h2>
+          <h2>🏋️ AI 訓練計劃庫 <span className="card-sub">共 {allPlans.length} 個計劃 · 2026 訓練模式 · 撳即開</span></h2>
+          <div className="plan-filters">
+            <input className="inp" placeholder="🔍 搜尋計劃 / 模式…" value={planQ} onChange={(e) => { setPlanQ(e.target.value); setPlanShown(12) }} />
+            <div className="chips">
+              <button className={`chip ${planLevel === '' ? 'on' : ''}`} onClick={() => { setPlanLevel(''); setPlanShown(12) }}>全部等級</button>
+              {['新手', '中階', '進階'].map((l) => (
+                <button key={l} className={`chip ${planLevel === l ? 'on' : ''}`} onClick={() => { setPlanLevel(planLevel === l ? '' : l); setPlanShown(12) }}>{l}</button>
+              ))}
+            </div>
+            <div className="chips">
+              <button className={`chip ${planGoal === '' ? 'on' : ''}`} onClick={() => { setPlanGoal(''); setPlanShown(12) }}>全部目標</button>
+              {['增肌', '力量', '減脂'].map((g) => (
+                <button key={g} className={`chip ${planGoal === g ? 'on' : ''}`} onClick={() => { setPlanGoal(planGoal === g ? '' : g); setPlanShown(12) }}>{g}</button>
+              ))}
+              <select className="inp" style={{ padding: '6px 10px', fontSize: 12 }} value={planDays} onChange={(e) => { setPlanDays(e.target.value); setPlanShown(12) }}>
+                <option value="">全部天數</option>
+                {[2, 3, 4, 5, 6].map((d) => <option key={d} value={d}>{d} 日</option>)}
+              </select>
+            </div>
+          </div>
           <div className="plan-grid">
-            {PLANS.map((p) => (
+            {filteredPlans.slice(0, planShown).map((p) => (
               <button key={p.id} className="plan-card" onClick={() => ctx.startWorkout({ name: p.name, exercises: p.exercises.map((e) => ({ exerciseId: e.exerciseId, name: (EXERCISES.find((x) => x.id === e.exerciseId) || {}).zh || e.exerciseId, muscle: (EXERCISES.find((x) => x.id === e.exerciseId) || {}).muscle || '' })) })}>
-                <span className="p-level">{p.level}</span>
+                <span className="p-level">{p.level} · {p.goal || ''} · {p.days}日</span>
                 <b>{p.name}</b>
-                <span className="p-meta">{p.days} · {p.exercises.length} 個動作</span>
+                <span className="p-meta">{p.eq || ''} · {p.exercises.length} 個動作</span>
                 <span className="p-desc">{p.desc}</span>
                 <span className="p-ex">
-                  {p.exercises.map((e) => (
+                  {p.exercises.slice(0, 8).map((e) => (
                     <span key={e.exerciseId} className="p-ex-item">{`${(EXERCISES.find((x) => x.id === e.exerciseId) || {}).zh || ''} ${e.sets}×${e.reps}`}</span>
                   ))}
+                  {p.exercises.length > 8 && <span className="p-ex-item">+{p.exercises.length - 8}</span>}
                 </span>
               </button>
             ))}
           </div>
+          {filteredPlans.length === 0 && <div className="empty-note">搵唔到符合條件嘅計劃,試下放寬篩選。</div>}
+          {filteredPlans.length > planShown && (
+            <div style={{ textAlign: 'center', marginTop: 14 }}>
+              <button className="btn btn-ghost" onClick={() => setPlanShown(planShown + 12)}>顯示更多 ({planShown}/{filteredPlans.length})</button>
+            </div>
+          )}
         </section>
         <section className="card center-card">
           <h2>或者自由開練</h2>

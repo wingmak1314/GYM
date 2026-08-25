@@ -169,7 +169,7 @@ export default function App() {
         <nav>
           {TABS.map((t) => (
             <button key={t.id} className={`nav-item ${tab === t.id ? 'active' : ''}`} onClick={() => setTab(t.id)}>
-              <svg viewBox="0 0 24 24" width="18" height="18"><path d={t.icon} fill="currentColor" /></svg>
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d={t.icon} /></svg>
               {t.zh}
             </button>
           ))}
@@ -194,7 +194,7 @@ export default function App() {
       <nav className="tabbar">
         {TABS.map((t) => (
           <button key={t.id} className={`tabbar-item ${tab === t.id ? 'active' : ''}`} onClick={() => setTab(t.id)}>
-            <svg viewBox="0 0 24 24" width="20" height="20"><path d={t.icon} fill="currentColor" /></svg>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d={t.icon} /></svg>
             <span>{t.zh}</span>
           </button>
         ))}

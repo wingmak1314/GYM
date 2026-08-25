@@ -1,24 +1,24 @@
-/* ═══ GymLog 2026 — 科技感主題 ═══ */
+/* ═══ GymLog 2026 — Gainflow 風格主題 (色/字型跟 gainflow.app) ═══ */
 :root {
-  --bg: #0a0b0f;
-  --bg2: #0e1016;
-  --panel: rgba(20, 23, 30, 0.72);
-  --panel-solid: #14171e;
-  --panel2: rgba(28, 32, 42, 0.8);
-  --border: rgba(255, 255, 255, 0.08);
-  --border-hi: rgba(199, 245, 70, 0.35);
-  --text: #eef1f6;
-  --muted: #8b93a3;
-  --accent: #c7f546;
-  --accent2: #4db8ff;
+  --bg: #000;
+  --bg2: #050505;
+  --panel: rgba(26, 26, 26, 0.78);
+  --panel-solid: #1a1a1a;
+  --panel2: rgba(40, 40, 40, 0.82);
+  --border: rgba(255, 255, 255, 0.09);
+  --border-hi: rgba(199, 245, 49, 0.38);
+  --text: #f5f5f4;
+  --muted: #a1a1aa;
+  --accent: #c7f531;      /* gainflow lime-teal hsl(165.9 90.7% 57.6%) ≈ #C7F531 */
+  --accent2: #1fcefd;     /* gainflow blue hsl(192.7 98.2% 55.7%) ≈ #1FCEFD */
   --purple: #a29bfe;
   --accent-dim: #9dbd2e;
   --accent-ink: #101400;
   --danger: #ff5c5c;
-  --blue: #4db8ff;
+  --blue: #1fcefd;
   --radius: 16px;
-  --glow: 0 0 24px rgba(199, 245, 70, 0.22);
-  --font: 'Segoe UI', system-ui, -apple-system, 'PingFang TC', 'Microsoft JhengHei', 'Noto Sans TC', sans-serif;
+  --glow: 0 0 24px rgba(199, 245, 49, 0.22);
+  --font: 'Poppins', 'Segoe UI', system-ui, -apple-system, 'PingFang TC', 'Microsoft JhengHei', 'Noto Sans TC', sans-serif;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -767,3 +767,12 @@ select.inp { appearance: none; background-image: linear-gradient(45deg, transpar
   .photo-grid { grid-template-columns: repeat(2, 1fr); }
   .rest-time { font-size: 26px; }
 }
+
+/* 計劃庫篩選 */
+.plan-filters { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+.plan-filters > .inp { width: 100%; }
+.plan-filters .chips { align-items: center; }
+
+/* Poppins 微調 */
+.logo b, .page-head h1, .stat-card b, .rest-time { letter-spacing: 0.01em; }
+.lib-name, .ex-name { letter-spacing: 0.01em; }

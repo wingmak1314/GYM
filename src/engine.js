@@ -163,6 +163,24 @@ export function exerciseProgress(workouts, exerciseId) {
   return pts;
 }
 
+// 累積訓練量 (順日期)
+export function cumulativeVolume(workouts) {
+  const sorted = [...workouts].sort((a, b) => a.date.localeCompare(b.date))
+  const out = []
+  let acc = 0
+  for (const w of sorted) {
+    acc += workoutVolume(w)
+    out.push({ date: w.date, label: w.date.slice(5), vol: Math.round(acc) })
+  }
+  return out
+}
+
+// 每週訓練次數 (近 n 週)
+export function weeklyFrequency(workouts, weeks = 12) {
+  const vols = weeklyVolume(workouts, weeks)
+  return vols.map((v) => ({ label: v.label, sessions: v.sessions }))
+}
+
 // ---- CSV ----
 const CSV_HEADER = 'Date,Exercise,Muscle,Set,Weight,Reps';
 
