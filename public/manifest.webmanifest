@@ -1,0 +1,13 @@
+{
+  "name": "GymLog 健身追蹤",
+  "short_name": "GymLog",
+  "description": "免費健身追蹤:紀錄訓練、追蹤 PR、分析進度。免安裝,資料存喺瀏覽器。",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0d0e11",
+  "theme_color": "#0d0e11",
+  "icons": [
+    { "src": "./favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
