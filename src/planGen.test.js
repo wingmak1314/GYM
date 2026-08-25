@@ -40,12 +40,20 @@ describe('300 個訓練表生成器', () => {
 })
 
 describe('做法教學', () => {
-  it('S 級動作有逐步做法', () => {
-    expect(howTo('squat', '股四頭').length).toBeGreaterThanOrEqual(5)
-    expect(howTo('deadlift', '背').length).toBeGreaterThanOrEqual(5)
-    expect(howTo('trapdead', '背').length).toBeGreaterThanOrEqual(5)
+  it('S 級動作有詳細教學(步驟+錯誤+變體+呼吸)', () => {
+    const s = howTo('squat', '股四頭')
+    expect(s.steps.length).toBeGreaterThanOrEqual(8)
+    expect(s.mistakes.length).toBeGreaterThan(0)
+    expect(s.easier).toBeTruthy()
+    expect(s.harder).toBeTruthy()
+    expect(s.breathe).toBeTruthy()
+    const d = howTo('deadlift', '背')
+    expect(d.steps.length).toBeGreaterThanOrEqual(8)
+    const t = howTo('trapdead', '背')
+    expect(t.steps.length).toBeGreaterThanOrEqual(6)
   })
   it('冇做法 → 用提示 fallback', () => {
-    expect(howTo('zzz', '二頭').length).toBeGreaterThan(0)
+    const f = howTo('zzz', '二頭')
+    expect(f.steps.length).toBeGreaterThan(0)
   })
 })

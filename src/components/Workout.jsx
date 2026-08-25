@@ -161,9 +161,26 @@ function ExerciseBlock({ ctx, ex, exIdx, refs }) {
         📋 做法教學 {showCues ? '▴' : '▾'}
       </button>
       {showCues && (
-        <ol className="cues-list">
-          {steps.map((c, i) => <li key={i}>{i + 1}. {c}</li>)}
-        </ol>
+        <div className="howto">
+          <ol className="cues-list">
+            {steps.steps.map((c, i) => <li key={i}>{i + 1}. {c}</li>)}
+          </ol>
+          {steps.mistakes.length > 0 && (
+            <>
+              <div className="howto-sec warn">⚠️ 常見錯誤</div>
+              <ul className="cues-list warn-list">
+                {steps.mistakes.map((m, i) => <li key={i}>✕ {m}</li>)}
+              </ul>
+            </>
+          )}
+          {(steps.easier || steps.harder) && (
+            <div className="howto-variants">
+              {steps.easier && <span className="howto-chip easy">🟢 新手版:{steps.easier}</span>}
+              {steps.harder && <span className="howto-chip hard">🔥 進階版:{steps.harder}</span>}
+            </div>
+          )}
+          {steps.breathe && <div className="howto-breathe">🫁 呼吸節奏:{steps.breathe}</div>}
+        </div>
       )}
       <div className="sets">
         {(ex.sets || []).map((s, j) => (

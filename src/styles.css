@@ -776,3 +776,15 @@ select.inp { appearance: none; background-image: linear-gradient(45deg, transpar
 /* Poppins 微調 */
 .logo b, .page-head h1, .stat-card b, .rest-time { letter-spacing: 0.01em; }
 .lib-name, .ex-name { letter-spacing: 0.01em; }
+
+/* 詳細做法教學 */
+.howto { display: flex; flex-direction: column; gap: 8px; margin: -4px 0 12px; }
+.howto-sec { font-size: 12px; font-weight: 700; color: var(--text); letter-spacing: 0.04em; }
+.howto-sec.warn { color: #ff9f43; }
+.cues-list.warn-list { border-color: rgba(255, 159, 67, 0.3); background: rgba(255, 159, 67, 0.05); }
+.cues-list.warn-list li { color: #d4b483; }
+.howto-variants { display: flex; flex-direction: column; gap: 6px; }
+.howto-chip { font-size: 12px; border-radius: 8px; padding: 6px 10px; }
+.howto-chip.easy { background: rgba(74, 222, 128, 0.08); border: 1px dashed rgba(74, 222, 128, 0.35); color: #86efac; }
+.howto-chip.hard { background: rgba(255, 92, 92, 0.07); border: 1px dashed rgba(255, 92, 92, 0.3); color: #ffabab; }
+.howto-breathe { font-size: 12px; color: #7dd3fc; background: rgba(31, 206, 253, 0.06); border: 1px solid rgba(31, 206, 253, 0.2); border-radius: 8px; padding: 6px 10px; }
