@@ -1,12 +1,55 @@
 import React, { useRef, useState } from 'react'
 import { exportCSV, parseCSV } from '../engine.js'
 import { GOALS } from '../aiCoach.js'
+import { pushState, pullState, checkServer, DEFAULT_SERVER } from '../sync.js'
 
 export default function Settings({ ctx }) {
   const { state, setState, unit, showToast } = ctx
   const fileRef = useRef(null)
   const [confirmClear, setConfirmClear] = useState(false)
   const [installEvt, setInstallEvt] = useState(null)
+  const [syncing, setSyncing] = useState(false)
+  const [status, setStatus] = useState('')
+  const [statusType, setStatusType] = useState('ok')
+
+  const setSt = (msg, err = false) => { setStatus(msg); setStatusType(err ? 'err' : 'ok') }
+
+  const doPush = async () => {
+    setSyncing(true); setSt('上傳緊…')
+    try {
+      const r = await pushState(state, state.settings.server, state.settings.user)
+      const ts = new Date().toLocaleString('zh-HK')
+      setState((s) => ({ ...s, settings: { ...s.settings, lastSync: ts } }))
+      setSt(`✅ 已備份 ${r.bytes} bytes (${ts})`)
+      showToast('✅ 已備份到雲端')
+    } catch (e) {
+      setSt(`❌ ${e.message}`, true)
+    } finally { setSyncing(false) }
+  }
+
+  const doPull = async () => {
+    setSyncing(true); setSt('下載緊…')
+    try {
+      const data = await pullState(state.settings.server, state.settings.user)
+      const n = (data.workouts || []).length
+      setState((s) => ({ ...s, ...data, settings: { ...s.settings, ...(data.settings || {}), user: s.settings.user, server: s.settings.server, lastSync: new Date().toLocaleString('zh-HK') } }))
+      setSt(`✅ 已回復 ${n} 次訓練`)
+      showToast(`✅ 已從雲端回復 (${n} 次訓練)`)
+    } catch (e) {
+      if (String(e.message).includes('404')) setSt('❌ 伺服器未有呢個用戶嘅資料', true)
+      else setSt(`❌ ${e.message}`, true)
+    } finally { setSyncing(false) }
+  }
+
+  const doCheck = async () => {
+    setSyncing(true); setSt('測試緊…')
+    try {
+      await checkServer(state.settings.server)
+      setSt('✅ 伺服器連線正常')
+    } catch (e) {
+      setSt(`❌ ${e.message}`, true)
+    } finally { setSyncing(false) }
+  }
 
   React.useEffect(() => {
     const h = (e) => { e.preventDefault(); setInstallEvt(e) }
@@ -39,6 +82,28 @@ export default function Settings({ ctx }) {
   return (
     <div className="page">
       <header className="page-head"><h1>設定</h1></header>
+
+      <section className="card">
+        <h2>☁️ 雲端備份 <span className="card-sub">資料存喺你部 NAS,唔怕冇咗</span></h2>
+        <p className="muted small">設一個用戶名(例如 WING),資料就會以你嘅名存喺 NAS 伺服器。換機/清 cache 都唔怕,一撳回復就返晒嚟。</p>
+        <div className="measure-form" style={{ marginTop: 10 }}>
+          <input className="inp" placeholder="用戶名 (例: WING)" value={state.settings.user || ''} onChange={(e) => setState((s) => ({ ...s, settings: { ...s.settings, user: e.target.value.trim() } }))} style={{ maxWidth: 150 }} />
+          <input className="inp" placeholder="伺服器網址" value={state.settings.server || DEFAULT_SERVER} onChange={(e) => setState((s) => ({ ...s, settings: { ...s.settings, server: e.target.value.trim() } }))} style={{ flex: 1, minWidth: 200 }} />
+        </div>
+        <div className="btn-row" style={{ marginTop: 10 }}>
+          <button className="btn btn-primary" onClick={doPush} disabled={syncing}>⬆ 備份到雲端</button>
+          <button className="btn btn-ghost" onClick={doPull} disabled={syncing}>⬇ 從雲端回復</button>
+          <button className="btn btn-ghost" onClick={doCheck} disabled={syncing}>🔌 測試連線</button>
+        </div>
+        <div className="sync-status" style={{ marginTop: 8 }}>
+          {status ? <span className={statusType === 'err' ? 'sync-err' : 'sync-ok'}>{status}</span> : null}
+          {state.settings.lastSync ? <span className="muted small" style={{ marginLeft: 8 }}>上次備份:{state.settings.lastSync}</span> : null}
+        </div>
+        <label className="sync-toggle" style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+          <input type="checkbox" checked={!!state.settings.autoSync} onChange={(e) => setState((s) => ({ ...s, settings: { ...s.settings, autoSync: e.target.checked } }))} />
+          <span className="small">自動備份(每次完成訓練/紀錄後自動上傳)</span>
+        </label>
+      </section>
 
       <section className="card">
         <h2>訓練目標 <span className="card-sub">AI 教練會跟住調整建議次數</span></h2>

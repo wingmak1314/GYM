@@ -1,6 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { loadState, saveState } from './store.js'
 import { uid, workoutVolume, workoutSets, workoutReps } from './engine.js'
+import { pushState } from './sync.js'
 import Dashboard from './components/Dashboard.jsx'
 import Workout from './components/Workout.jsx'
 import History from './components/History.jsx'
@@ -47,6 +48,17 @@ export default function App() {
     setTimeout(() => setToast(null), 2200)
   }
 
+  // 自動備份(開啟咗 autoSync 先會行,靜默,失敗唔騷擾)
+  const autoSyncRef = useRef(null)
+  const autoSync = (s) => {
+    const cfg = s.settings || {}
+    if (!cfg.autoSync || !cfg.user || !cfg.server) return
+    if (autoSyncRef.current) clearTimeout(autoSyncRef.current)
+    autoSyncRef.current = setTimeout(() => {
+      pushState(s, cfg.server, cfg.user).catch(() => {})
+    }, 1500)
+  }
+
   const todayStr = () => {
     const d = new Date()
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
@@ -75,10 +87,9 @@ export default function App() {
         .filter((e) => e.sets.length > 0),
     }
     if (!clean.exercises.length) { showToast('未紀錄任何組數'); return }
-    setState((s) => {
-      const others = s.workouts.filter((x) => x.id !== clean.id)
-      return { ...s, workouts: [...others, clean].sort((a, b) => a.date.localeCompare(b.date)) }
-    })
+    const next = { ...state, workouts: [...state.workouts.filter((x) => x.id !== clean.id), clean].sort((a, b) => a.date.localeCompare(b.date)) }
+    setState(next)
+    autoSync(next)
     setActiveWorkout(null)
     showToast('✅ 訓練已儲存')
     setTab('history')
@@ -90,10 +101,9 @@ export default function App() {
   }
 
   const addMeasurement = (m) => {
-    setState((s) => {
-      const others = s.measurements.filter((x) => x.date !== m.date)
-      return { ...s, measurements: [...others, m].sort((a, b) => a.date.localeCompare(b.date)) }
-    })
+    const next = { ...state, measurements: [...state.measurements.filter((x) => x.date !== m.date), m].sort((a, b) => a.date.localeCompare(b.date)) }
+    setState(next)
+    autoSync(next)
     showToast('✅ 已紀錄')
   }
 
@@ -113,12 +123,12 @@ export default function App() {
   }
 
   const toggleSupp = (date, name) => {
-    setState((s) => {
-      const day = [...(s.suppLog[date] || [])]
-      const i = day.indexOf(name)
-      if (i >= 0) day.splice(i, 1); else day.push(name)
-      return { ...s, suppLog: { ...s.suppLog, [date]: day } }
-    })
+    const day = [...(state.suppLog[date] || [])]
+    const i = day.indexOf(name)
+    if (i >= 0) day.splice(i, 1); else day.push(name)
+    const next = { ...state, suppLog: { ...state.suppLog, [date]: day } }
+    setState(next)
+    autoSync(next)
   }
 
   const addSupp = (name) => {
@@ -126,7 +136,9 @@ export default function App() {
   }
 
   const addPhoto = (photo) => {
-    setState((s) => ({ ...s, photos: [...(s.photos || []), photo] }))
+    const next = { ...state, photos: [...(state.photos || []), photo] }
+    setState(next)
+    autoSync(next)
   }
   const deletePhoto = (id) => {
     setState((s) => ({ ...s, photos: (s.photos || []).filter((p) => p.id !== id) }))
