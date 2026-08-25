@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { loadState, saveState } from './store.js'
 import { uid, workoutVolume, workoutSets, workoutReps } from './engine.js'
-import { pushToGist } from './ghSync.js'
+import { pushState } from './pantry.js'
 import Dashboard from './components/Dashboard.jsx'
 import Workout from './components/Workout.jsx'
 import History from './components/History.jsx'
@@ -48,15 +48,15 @@ export default function App() {
     setTimeout(() => setToast(null), 2200)
   }
 
-  // 自動備份去 GitHub(開咗 autoGh 先會行,靜默,失敗唔騷擾)
+  // 自動備份(開咗 autoSync 先會行,靜默,失敗唔騷擾)
   const autoSyncRef = useRef(null)
   const autoSync = (s) => {
     const cfg = s.settings || {}
-    if (!cfg.autoGh || !cfg.ghToken) return
+    if (!cfg.autoSync || !cfg.user || !cfg.pantryId) return
     if (autoSyncRef.current) clearTimeout(autoSyncRef.current)
     autoSyncRef.current = setTimeout(() => {
-      pushToGist(s, cfg.ghToken, cfg.ghGistId).catch(() => {})
-    }, 2000)
+      pushState(s, cfg.pantryId, cfg.user).catch(() => {})
+    }, 1500)
   }
 
   const todayStr = () => {
