@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { exportCSV, parseCSV } from '../engine.js'
 import { GOALS } from '../aiCoach.js'
-import { pushState, pullState, checkServer, DEFAULT_SERVER } from '../sync.js'
+import { pushToGist, pullFromGist, ghWhoami } from '../ghSync.js'
 
 export default function Settings({ ctx }) {
   const { state, setState, unit, showToast } = ctx
@@ -17,11 +17,11 @@ export default function Settings({ ctx }) {
   const doPush = async () => {
     setSyncing(true); setSt('上傳緊…')
     try {
-      const r = await pushState(state, state.settings.server, state.settings.user)
+      const r = await pushToGist(state, state.settings.ghToken, state.settings.ghGistId)
       const ts = new Date().toLocaleString('zh-HK')
-      setState((s) => ({ ...s, settings: { ...s.settings, lastSync: ts } }))
-      setSt(`✅ 已備份 ${r.bytes} bytes (${ts})`)
-      showToast('✅ 已備份到雲端')
+      setState((s) => ({ ...s, settings: { ...s.settings, ghGistId: r.gistId, lastSync: ts } }))
+      setSt(`✅ 已備份${r.created ? '(已建立私人 Gist)' : ''} (${ts})`)
+      showToast('✅ 已備份到 GitHub')
     } catch (e) {
       setSt(`❌ ${e.message}`, true)
     } finally { setSyncing(false) }
@@ -30,22 +30,21 @@ export default function Settings({ ctx }) {
   const doPull = async () => {
     setSyncing(true); setSt('下載緊…')
     try {
-      const data = await pullState(state.settings.server, state.settings.user)
+      const data = await pullFromGist(state.settings.ghToken, state.settings.ghGistId)
       const n = (data.workouts || []).length
-      setState((s) => ({ ...s, ...data, settings: { ...s.settings, ...(data.settings || {}), user: s.settings.user, server: s.settings.server, lastSync: new Date().toLocaleString('zh-HK') } }))
+      setState((s) => ({ ...s, ...data, settings: { ...s.settings, ...(data.settings || {}), ghToken: s.settings.ghToken, ghGistId: s.settings.ghGistId, lastSync: new Date().toLocaleString('zh-HK') } }))
       setSt(`✅ 已回復 ${n} 次訓練`)
-      showToast(`✅ 已從雲端回復 (${n} 次訓練)`)
+      showToast(`✅ 已從 GitHub 回復 (${n} 次訓練)`)
     } catch (e) {
-      if (String(e.message).includes('404')) setSt('❌ 伺服器未有呢個用戶嘅資料', true)
-      else setSt(`❌ ${e.message}`, true)
+      setSt(`❌ ${e.message}`, true)
     } finally { setSyncing(false) }
   }
 
   const doCheck = async () => {
-    setSyncing(true); setSt('測試緊…')
+    setSyncing(true); setSt('驗證緊 Token…')
     try {
-      await checkServer(state.settings.server)
-      setSt('✅ 伺服器連線正常')
+      const login = await ghWhoami(state.settings.ghToken)
+      setSt(`✅ Token 有效 — ${login}`)
     } catch (e) {
       setSt(`❌ ${e.message}`, true)
     } finally { setSyncing(false) }
@@ -84,23 +83,22 @@ export default function Settings({ ctx }) {
       <header className="page-head"><h1>設定</h1></header>
 
       <section className="card">
-        <h2>☁️ 雲端備份 <span className="card-sub">資料存喺你部 NAS,唔怕冇咗</span></h2>
-        <p className="muted small">設一個用戶名(例如 WING),資料就會以你嘅名存喺 NAS 伺服器。換機/清 cache 都唔怕,一撳回復就返晒嚟。</p>
+        <h2>💾 GitHub 備份 <span className="card-sub">資料存喺你嘅 GitHub 私人 Gist,永久唔會冇</span></h2>
+        <p className="muted small">填入你嘅 GitHub Token(去 GitHub → Settings → Developer settings → Personal access tokens → <b>Tokens (classic)</b> → Generate new token,淨係 tick <b>gist</b> 一格就得)。Token 只會存喺你部機瀏覽器,唔會上傳。第一次備份會自動開一個私人 Gist。</p>
         <div className="measure-form" style={{ marginTop: 10 }}>
-          <input className="inp" placeholder="用戶名 (例: WING)" value={state.settings.user || ''} onChange={(e) => setState((s) => ({ ...s, settings: { ...s.settings, user: e.target.value.trim() } }))} style={{ maxWidth: 150 }} />
-          <input className="inp" placeholder="伺服器網址" value={state.settings.server || DEFAULT_SERVER} onChange={(e) => setState((s) => ({ ...s, settings: { ...s.settings, server: e.target.value.trim() } }))} style={{ flex: 1, minWidth: 200 }} />
+          <input className="inp" type="password" placeholder="GitHub Token (淨 gist scope)" value={state.settings.ghToken || ''} onChange={(e) => setState((s) => ({ ...s, settings: { ...s.settings, ghToken: e.target.value.trim() } }))} style={{ flex: 1, minWidth: 220 }} />
         </div>
         <div className="btn-row" style={{ marginTop: 10 }}>
-          <button className="btn btn-primary" onClick={doPush} disabled={syncing}>⬆ 備份到雲端</button>
-          <button className="btn btn-ghost" onClick={doPull} disabled={syncing}>⬇ 從雲端回復</button>
-          <button className="btn btn-ghost" onClick={doCheck} disabled={syncing}>🔌 測試連線</button>
+          <button className="btn btn-primary" onClick={doPush} disabled={syncing}>⬆ 備份到 GitHub</button>
+          <button className="btn btn-ghost" onClick={doPull} disabled={syncing}>⬇ 從 GitHub 回復</button>
+          <button className="btn btn-ghost" onClick={doCheck} disabled={syncing}>🔌 驗證 Token</button>
         </div>
         <div className="sync-status" style={{ marginTop: 8 }}>
           {status ? <span className={statusType === 'err' ? 'sync-err' : 'sync-ok'}>{status}</span> : null}
           {state.settings.lastSync ? <span className="muted small" style={{ marginLeft: 8 }}>上次備份:{state.settings.lastSync}</span> : null}
         </div>
         <label className="sync-toggle" style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
-          <input type="checkbox" checked={!!state.settings.autoSync} onChange={(e) => setState((s) => ({ ...s, settings: { ...s.settings, autoSync: e.target.checked } }))} />
+          <input type="checkbox" checked={!!state.settings.autoGh} onChange={(e) => setState((s) => ({ ...s, settings: { ...s.settings, autoGh: e.target.checked } }))} />
           <span className="small">自動備份(每次完成訓練/紀錄後自動上傳)</span>
         </label>
       </section>
