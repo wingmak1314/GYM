@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react'
-import { workoutVolume, workoutSets, workoutReps, epley } from '../engine.js'
+import { workoutVolume, workoutSets, workoutReps } from '../engine.js'
+import ExerciseIcon from '../icons.jsx'
 
 function WorkoutDetail({ w, ctx }) {
   const [open, setOpen] = useState(false)
@@ -20,6 +21,7 @@ function WorkoutDetail({ w, ctx }) {
           {w.exercises.map((ex, i) => (
             <div key={i} className="hist-ex">
               <div className="hist-ex-head">
+                <ExerciseIcon icon={ex.exerciseId || ex.name} size="sm" className="gray" />
                 <b>{ex.name}</b>
                 {ex.muscle && <span className="tag">{ex.muscle}</span>}
               </div>

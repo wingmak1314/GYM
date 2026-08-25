@@ -1,11 +1,13 @@
 import React, { useMemo, useRef, useState } from 'react'
-import { EXERCISES, MUSCLES, EQUIPMENTS } from '../exercises.js'
-import { detectPR, lastWorkoutFor, workoutVolume, workoutSets, workoutReps, epley } from '../engine.js'
+import { EXERCISES, MUSCLES } from '../exercises.js'
+import { detectPR, lastWorkoutFor, workoutVolume, workoutSets, workoutReps } from '../engine.js'
+import { valueTier, suggestNextWeight, PLANS } from '../aiCoach.js'
+import ExerciseIcon from '../icons.jsx'
 
 const PR_TYPE = { weight: '重量PR', e1rm: '1RM PR', volume: '量PR' }
 
 function SetRow({ ctx, ex, exIdx, setIdx, set, refs }) {
-  const { fmt, toKg, state } = ctx
+  const { state, toKg } = ctx
   const [pr, setPr] = useState(() => (set.kg && set.reps ? detectPR(state.workouts, ex.exerciseId, set.kg, set.reps, ctx.activeWorkout.date) : null))
   const kgRef = refs[`kg-${exIdx}-${setIdx}`]
   const repsRef = refs[`reps-${exIdx}-${setIdx}`]
@@ -26,7 +28,6 @@ function SetRow({ ctx, ex, exIdx, setIdx, set, refs }) {
       if (field === 'kg') {
         repsRef.current && repsRef.current.focus()
       } else {
-        // 完成呢組 → 開新一組
         const kgv = set.kg, rv = set.reps
         if (kgv && rv) addSet()
         else kgRef.current && kgRef.current.focus()
@@ -73,12 +74,19 @@ function SetRow({ ctx, ex, exIdx, setIdx, set, refs }) {
 }
 
 function ExerciseBlock({ ctx, ex, exIdx, refs }) {
-  const { state, activeWorkout, setActiveWorkout, fmt } = ctx
+  const { state, setActiveWorkout } = ctx
   const last = lastWorkoutFor(state.workouts, ex.exerciseId)
+  const suggest = suggestNextWeight(last)
   const addSet = () => {
     const prev = ex.sets.length ? ex.sets[ex.sets.length - 1] : { kg: '', reps: '' }
     setActiveWorkout((w) => {
       const ws = w.exercises.map((e, i) => i !== exIdx ? e : { ...e, sets: [...e.sets, { kg: prev.kg, reps: prev.reps }] })
+      return { ...w, exercises: ws }
+    })
+  }
+  const useSuggest = () => {
+    setActiveWorkout((w) => {
+      const ws = w.exercises.map((e, i) => i !== exIdx ? e : { ...e, sets: [...e.sets, { kg: suggest.kg, reps: suggest.reps }] })
       return { ...w, exercises: ws }
     })
   }
@@ -89,15 +97,23 @@ function ExerciseBlock({ ctx, ex, exIdx, refs }) {
   return (
     <div className="ex-block">
       <div className="ex-head">
-        <div>
-          <b className="ex-name">{ex.name}</b>
-          <span className="ex-tags">
-            <span className="tag">{ex.muscle || ''}</span>
-            {last ? <span className="tag last" title="上次訓練">上次 {last.map((s) => `${s.kg}×${s.reps}`).join(' ')}</span> : <span className="tag muted">無上次紀錄</span>}
-          </span>
+        <div className="ex-title">
+          <div className="ex-icon-wrap"><ExerciseIcon icon={ex.exerciseId || ex.name} size="md" /></div>
+          <div>
+            <b className="ex-name">{ex.name}</b>
+            <div className="ex-tags">
+              <span className="tag">{ex.muscle || ''}</span>
+              {last ? <span className="tag last" title="上次訓練">上次 {last.map((s) => `${s.kg}×${s.reps}`).join(' ')}</span> : <span className="tag muted">無上次紀錄</span>}
+            </div>
+          </div>
         </div>
         <button className="icon-btn" onClick={removeEx} title="移除動作">✕</button>
       </div>
+      {suggest && (
+        <button className="suggest-hint" onClick={useSuggest} title="AI 教練建議下一組重量">
+          💡 AI:{suggest.reason} — 撳一下加入
+        </button>
+      )}
       <div className="sets">
         {(ex.sets || []).map((s, j) => (
           <SetRow key={j} ctx={ctx} ex={ex} exIdx={exIdx} setIdx={j} set={s} refs={refs} />
@@ -110,13 +126,14 @@ function ExerciseBlock({ ctx, ex, exIdx, refs }) {
 }
 
 export default function Workout({ ctx }) {
-  const { state, activeWorkout, setActiveWorkout, saveWorkout, saveTemplate, addCustomExercise, fmt, showToast } = ctx
+  const { state, activeWorkout, setActiveWorkout, saveWorkout, saveTemplate, addCustomExercise, showToast } = ctx
   const [q, setQ] = useState('')
   const [muscle, setMuscle] = useState('')
   const [showTemplates, setShowTemplates] = useState(false)
   const [customOpen, setCustomOpen] = useState(false)
   const [customName, setCustomName] = useState('')
   const [customMuscle, setCustomMuscle] = useState('胸')
+  const [libOpen, setLibOpen] = useState(false)
   const refs = useRef({})
 
   const library = useMemo(() => {
@@ -134,8 +151,26 @@ export default function Workout({ ctx }) {
     return (
       <div className="page">
         <header className="page-head"><h1>訓練</h1></header>
+        <section className="card">
+          <h2>🏋️ AI 訓練計劃庫 <span className="card-sub">撳計劃即開,全部係 2026 最高性價比編排</span></h2>
+          <div className="plan-grid">
+            {PLANS.map((p) => (
+              <button key={p.id} className="plan-card" onClick={() => ctx.startWorkout({ name: p.name, exercises: p.exercises.map((e) => ({ exerciseId: e.exerciseId, name: (EXERCISES.find((x) => x.id === e.exerciseId) || {}).zh || e.exerciseId, muscle: (EXERCISES.find((x) => x.id === e.exerciseId) || {}).muscle || '' })) })}>
+                <span className="p-level">{p.level}</span>
+                <b>{p.name}</b>
+                <span className="p-meta">{p.days} · {p.exercises.length} 個動作</span>
+                <span className="p-desc">{p.desc}</span>
+                <span className="p-ex">
+                  {p.exercises.map((e) => (
+                    <span key={e.exerciseId} className="p-ex-item">{`${(EXERCISES.find((x) => x.id === e.exerciseId) || {}).zh || ''} ${e.sets}×${e.reps}`}</span>
+                  ))}
+                </span>
+              </button>
+            ))}
+          </div>
+        </section>
         <section className="card center-card">
-          <h2>今日想練咩?</h2>
+          <h2>或者自由開練</h2>
           <p className="muted">由課表開始、複製上次訓練,或者由零開始。</p>
           <div className="btn-row">
             <button className="btn btn-primary" onClick={() => ctx.startWorkout()}>開始空白訓練</button>
@@ -169,18 +204,55 @@ export default function Workout({ ctx }) {
     }))
   }
 
-  const addSetToIdx = (exIdx) => {
-    const ex = activeWorkout.exercises[exIdx]
-    const prev = ex.sets.length ? ex.sets[ex.sets.length - 1] : { kg: '', reps: '' }
-    setActiveWorkout((w) => {
-      const ws = w.exercises.map((e, i) => i !== exIdx ? e : { ...e, sets: [...e.sets, { kg: prev.kg, reps: prev.reps }] })
-      return { ...w, exercises: ws }
-    })
-  }
-
   const vol = workoutVolume(activeWorkout)
   const sets = workoutSets(activeWorkout)
   const reps = workoutReps(activeWorkout)
+
+  const libPanel = (
+    <aside className={`library ${libOpen ? 'open' : ''}`}>
+      <div className="lib-search">
+        <input className="inp" placeholder="🔍 搜尋動作…" value={q} onChange={(e) => setQ(e.target.value)} />
+      </div>
+      <div className="chips">
+        <button className={`chip ${muscle === '' ? 'on' : ''}`} onClick={() => setMuscle('')}>全部</button>
+        {MUSCLES.map((m) => (
+          <button key={m} className={`chip ${muscle === m ? 'on' : ''}`} onClick={() => setMuscle(m)}>{m}</button>
+        ))}
+      </div>
+      <div className="lib-list">
+        {library.map((e, i) => {
+          const tier = valueTier(e.id)
+          return (
+            <button key={e.id} className={`lib-item ${activeIds.has(e.id) ? 'added' : ''}`} style={{ animationDelay: `${Math.min(i * 14, 300)}ms` }} onClick={() => { addExercise(e); setLibOpen(false) }}>
+              <ExerciseIcon icon={e.id} size="sm" className={activeIds.has(e.id) ? 'gray' : ''} />
+              <span className="li-main">
+                <span className="li-name">{e.zh}</span>
+                <span className="li-tags"><span className="tag">{e.muscle}</span><span className={`tag tier-${tier.label[0]}`}>性價比 {tier.label[0]}</span></span>
+              </span>
+            </button>
+          )
+        })}
+        {!library.length && <div className="empty-note">搵唔到動作 — 可以自己加一個 ↓</div>}
+      </div>
+      {customOpen ? (
+        <div className="custom-form">
+          <input className="inp" placeholder="動作名稱(例:斜板彎舉)" value={customName} onChange={(e) => setCustomName(e.target.value)} />
+          <select className="inp" value={customMuscle} onChange={(e) => setCustomMuscle(e.target.value)}>
+            {MUSCLES.map((m) => <option key={m} value={m}>{m}</option>)}
+          </select>
+          <button className="btn btn-ghost btn-sm" onClick={() => {
+            if (!customName.trim()) return
+            const ex = addCustomExercise(customName.trim(), customMuscle)
+            setCustomName(''); setCustomOpen(false)
+            setQ(customName.trim())
+            setTimeout(() => addExercise(ex), 30)
+          }}>✓ 加入動作庫</button>
+        </div>
+      ) : (
+        <button className="btn btn-ghost btn-sm btn-block" onClick={() => setCustomOpen(true)}>＋ 自訂動作</button>
+      )}
+    </aside>
+  )
 
   return (
     <div className="page workout-page">
@@ -194,46 +266,14 @@ export default function Workout({ ctx }) {
         </div>
       </header>
 
-      <div className="workout-layout">
-        <aside className="library">
-          <div className="lib-search">
-            <input className="inp" placeholder="🔍 搜尋動作…" value={q} onChange={(e) => setQ(e.target.value)} />
-          </div>
-          <div className="chips">
-            <button className={`chip ${muscle === '' ? 'on' : ''}`} onClick={() => setMuscle('')}>全部</button>
-            {MUSCLES.map((m) => (
-              <button key={m} className={`chip ${muscle === m ? 'on' : ''}`} onClick={() => setMuscle(m)}>{m}</button>
-            ))}
-          </div>
-          <div className="lib-list">
-            {library.map((e) => (
-              <button key={e.id} className={`lib-item ${activeIds.has(e.id) ? 'added' : ''}`} onClick={() => addExercise(e)}>
-                <span className="li-name">{e.zh}</span>
-                <span className="li-tags"><span className="tag">{e.muscle}</span><span className="tag muted">{e.equipment}</span></span>
-              </button>
-            ))}
-            {!library.length && <div className="empty-note">搵唔到動作 — 可以自己加一個 ↓</div>}
-          </div>
-          {customOpen ? (
-            <div className="custom-form">
-              <input className="inp" placeholder="動作名稱(例:斜板彎舉)" value={customName} onChange={(e) => setCustomName(e.target.value)} />
-              <select className="inp" value={customMuscle} onChange={(e) => setCustomMuscle(e.target.value)}>
-                {MUSCLES.map((m) => <option key={m} value={m}>{m}</option>)}
-              </select>
-              <button className="btn btn-ghost btn-sm" onClick={() => {
-                if (!customName.trim()) return
-                const ex = addCustomExercise(customName.trim(), customMuscle)
-                setCustomName(''); setCustomOpen(false)
-                setQ(customName.trim())
-                setTimeout(() => addExercise(ex), 30)
-              }}>✓ 加入動作庫</button>
-            </div>
-          ) : (
-            <button className="btn btn-ghost btn-sm btn-block" onClick={() => setCustomOpen(true)}>＋ 自訂動作</button>
-          )}
-        </aside>
+      <div className={`lib-scrim ${libOpen ? 'show' : ''}`} onClick={() => setLibOpen(false)} />
 
+      <div className="workout-layout">
+        {libPanel}
         <div className="workout-main">
+          <button className="lib-open-btn" onClick={() => setLibOpen(!libOpen)}>
+            {libOpen ? '▾ 收埋動作庫' : `＋ 動作庫 (已加 ${activeWorkout.exercises.length} 個動作)`}
+          </button>
           {!activeWorkout.exercises.length && (
             <div className="card center-card">
               <h2>未加動作</h2>

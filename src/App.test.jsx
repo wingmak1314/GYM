@@ -79,6 +79,9 @@ describe('GymLog 完整流程', () => {
   })
 
   it('CSV 匯出內容正確', () => {
+    // jsdom 冇 createObjectURL,stub 佢(真實瀏覽器冇呢個問題)
+    URL.createObjectURL = () => 'blob:mock'
+    URL.revokeObjectURL = () => {}
     // 直接經 localStorage 播入一場訓練再 render
     const workout = {
       id: 'w1', date: '2026-08-20', name: 'Push Day',

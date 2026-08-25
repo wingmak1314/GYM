@@ -128,8 +128,21 @@ export default function App() {
     <div className="app">
       <aside className="sidebar">
         <div className="logo">
-          <svg viewBox="0 0 64 64" width="34" height="34"><rect x="2" y="2" width="60" height="60" rx="14" fill="#0d0e11" stroke="#c7f546" strokeWidth="2"/><rect x="12" y="20" width="40" height="13" rx="3" fill="#c7f546"/><rect x="12" y="35" width="40" height="11" rx="3" fill="#3a3d46"/></svg>
-          <div><b>GymLog</b><span>健身追蹤</span></div>
+          <svg className="logo-mark" viewBox="0 0 64 64" width="36" height="36">
+            <defs>
+              <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stopColor="#c7f546" /><stop offset="1" stopColor="#4db8ff" />
+              </linearGradient>
+            </defs>
+            <rect x="2" y="2" width="60" height="60" rx="15" fill="#0b0c10" stroke="rgba(199,245,70,0.25)" />
+            <path d="M14 34h36v-4H14z" fill="url(#lg)" />
+            <path d="M8 30h6v4H8zM50 30h6v4h-6z" fill="url(#lg)" />
+            <rect x="20" y="12" width="4" height="10" rx="2" fill="url(#lg)" />
+            <rect x="40" y="12" width="4" height="10" rx="2" fill="url(#lg)" />
+            <rect x="20" y="42" width="4" height="10" rx="2" fill="url(#lg)" />
+            <rect x="40" y="42" width="4" height="10" rx="2" fill="url(#lg)" />
+          </svg>
+          <div><b>GymLog</b><span>AI 健身追蹤</span></div>
         </div>
         <nav>
           {TABS.map((t) => (

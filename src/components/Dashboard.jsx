@@ -1,5 +1,8 @@
 import React, { useMemo } from 'react'
 import { buildHeatmap, weeklyVolume, muscleDistribution, detectPR, epley, workoutVolume, workoutSets } from '../engine.js'
+import { suggestToday } from '../aiCoach.js'
+import ExerciseIcon from '../icons.jsx'
+import { EXERCISES } from '../exercises.js'
 
 const MUSCLE_COLORS = {
   '胸': '#c7f546', '背': '#4db8ff', '肩': '#ff9f43', '二頭': '#ff6b9d',
@@ -92,6 +95,43 @@ function RecentPRs({ state }) {
   )
 }
 
+function AiCoachCard({ state }) {
+  const reco = useMemo(() => suggestToday(state), [state])
+  const ex = EXERCISES.find((e) => e.id === reco.exId)
+  const sTier = useMemo(() => {
+    const S = ['squat', 'bench', 'deadlift', 'ohp', 'pullup', 'hipthrust']
+    return S.map((id) => ({ id, zh: (EXERCISES.find((e) => e.id === id) || {}).zh || id }))
+  }, [])
+  return (
+    <section className="card ai-card">
+      <div className="ai-head">
+        <span className="ai-badge"><span className="dot" /> AI 教練 · 2026</span>
+        <span className="card-sub">基於你嘅訓練紀錄動態分析</span>
+      </div>
+      <div className="ai-row">
+        <div className="ai-reco">
+          <div className="ai-reco-icon"><ExerciseIcon icon={ex ? ex.id : 'generic'} size="md" /></div>
+          <div>
+            <b>今日建議:{reco.muscle}</b>
+            <div style={{ color: 'var(--accent)', fontWeight: 600 }}>{ex ? ex.zh : reco.zh} — 最高性價比選擇</div>
+            <p>{reco.reason}</p>
+          </div>
+        </div>
+        <div className="ai-tier-list">
+          <div style={{ fontSize: 12, color: 'var(--muted)', letterSpacing: '0.08em' }}>性價比最高動作 (S 級)</div>
+          {sTier.map((t) => (
+            <div key={t.id} className="ai-tier-row">
+              <span className="tier-badge S">S</span>
+              <span>{t.zh}</span>
+              <span className="ai-tier-reason" style={{ marginLeft: 'auto' }}>多肌群 · 高回報</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 export default function Dashboard({ ctx }) {
   const { state, fmt, stats, startWorkout } = ctx
   const vols = weeklyVolume(state.workouts, 12)
@@ -106,6 +146,8 @@ export default function Dashboard({ ctx }) {
         <h1>儀表板</h1>
         <button className="btn btn-primary" onClick={() => startWorkout()}>＋ 開始訓練</button>
       </header>
+
+      <AiCoachCard state={state} />
 
       <div className="stat-cards">
         <div className="stat-card"><span className="stat-label">本週訓練</span><b>{stats.sessions}</b><span className="stat-sub">次</span></div>
