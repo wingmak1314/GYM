@@ -163,18 +163,14 @@ export default function App() {
       <header className="topbar">
         <div className="logo">
           <svg className="logo-mark" viewBox="0 0 64 64" width="30" height="30">
-            <defs>
-              <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stopColor="#C06B4A" /><stop offset="1" stopColor="#5F6D57" />
-              </linearGradient>
-            </defs>
-            <rect x="2" y="2" width="60" height="60" rx="15" fill="#0b0c10" stroke="rgba(199,245,70,0.25)" />
-            <path d="M14 34h36v-4H14z" fill="url(#lg)" />
-            <path d="M8 30h6v4H8zM50 30h6v4h-6z" fill="url(#lg)" />
-            <rect x="20" y="12" width="4" height="10" rx="2" fill="url(#lg)" />
-            <rect x="40" y="12" width="4" height="10" rx="2" fill="url(#lg)" />
-            <rect x="20" y="42" width="4" height="10" rx="2" fill="url(#lg)" />
-            <rect x="40" y="42" width="4" height="10" rx="2" fill="url(#lg)" />
+            <rect width="64" height="64" rx="15" fill="#F5EFDC" />
+            <path d="M10 47 Q32 40 54 47" fill="none" stroke="#A9B898" strokeWidth="3.2" strokeLinecap="round" />
+            <text x="32" y="42" fontFamily="Georgia, 'Times New Roman', serif" fontSize="38" fontWeight="600" fill="#2E3540" textAnchor="middle">G</text>
+            <g fill="#C05B2D">
+              <rect x="20" y="29" width="5" height="10" rx="2.4" />
+              <rect x="39" y="29" width="5" height="10" rx="2.4" />
+              <rect x="24" y="32.6" width="16" height="2.8" rx="1.4" />
+            </g>
           </svg>
           <div><b>GymLog</b><span>AI 健身追蹤</span></div>
         </div>
