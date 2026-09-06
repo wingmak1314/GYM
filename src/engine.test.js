@@ -58,17 +58,19 @@ describe('熱力圖 / 每週 / 肌群', () => {
   ]
   // weeklyVolume 以「週一」開始計週 — 5 日前喺禮拜日 run 仍屬本週,
   // 所以每週測試用獨立數據:9 日前任何日子都必定喺上一週
+  // (8/29 例子: 9 日前可能跨兩個 bucket,所以檢查「倒數兩格總和」最穩陣)
   const nine = new Date(today); nine.setDate(nine.getDate() - 9)
   const ws2 = [
     wk(t, [{ exerciseId: 'bench', name: 'x', muscle: '胸', sets: [{ kg: 60, reps: 5 }, { kg: 60, reps: 5 }] }]),
     wk(iso(nine), [{ exerciseId: 'squat', name: 'y', muscle: '股四頭', sets: [{ kg: 100, reps: 5 }] }]),
   ]
   it('熱力圖今日=1', () => expect(buildHeatmap(ws)[t]).toBe(1))
-  it('每週訓練量最尾一格 = 今日訓練量 600', () => {
+  it('每週訓練量最尾一格 = 今日訓練量 600,今日必喺本週', () => {
     const v = weeklyVolume(ws2, 12)
     expect(v[v.length - 1].vol).toBe(600)
     expect(v[v.length - 1].sessions).toBe(1)
-    expect(v[v.length - 2].vol).toBe(500)
+    // 9 日前嗰 500kg 一定喺倒數兩格之內(唔會第三格)
+    expect(v[v.length - 2].vol + v[v.length - 3].vol).toBe(500)
   })
   it('肌群分布 7 日:胸 2 組,股四頭 1 組', () => {
     const m = muscleDistribution(ws, 7)
