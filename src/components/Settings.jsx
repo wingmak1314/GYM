@@ -163,7 +163,8 @@ export default function Settings({ ctx }) {
 
       <section className="card">
         <h2>關於</h2>
-        <p className="muted">GymLog — 免費健身追蹤,參考 Gainflow 概念整成。紀錄訓練 · 追蹤 PR · 分析進度。免安裝、無廣告、資料屬於你。</p>
+        <p className="muted">GymLog — 免費健身追蹤。紀錄訓練 · 追蹤 PR · 分析進度。免安裝、無廣告、資料屬於你。</p>
+        <p className="muted small" style={{ marginTop: 6 }}><a href="./landing.html" style={{ color: 'var(--accent)' }}>睇下 GymLog 嘅故事 →</a></p>
       </section>
     </div>
   )

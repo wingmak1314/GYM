@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GymLog — 慢慢練,先練得耐</title>
+<meta name="description" content="一個慢嘅健身紀錄 app。免費、無廣告、資料屬於你。第一下紀錄,由深蹲開始。" />
+<link rel="icon" href="./favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Karla:wght@400;500;600&family=Noto+Serif+TC:wght@300;400;500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400&text=%E5%81%A5%E8%BA%AB%E5%90%B8%E5%91%BC%E6%B0%A3%E7%B7%B4&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --paper:#FAF6EE;
+  --sand:#EFE6D4;
+  --sand-deep:#E3D7BE;
+  --sage:#A9B6A0;
+  --sage-deep:#5F6D57;
+  --sage-ink:#4A5744;
+  --terra:#C06B4A;
+  --terra-deep:#A95636;
+  --pink:#E5BCB3;
+  --ink:#33322D;
+  --ink-soft:#6E695C;
+  --line:rgba(51,50,45,.16);
+  --serif:"Fraunces","Noto Serif TC","Songti TC","PMingLiU",Georgia,serif;
+  --sans:"Karla","PingFang TC","Microsoft JhengHei",sans-serif;
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--paper);color:var(--ink);font-family:var(--sans);
+  font-size:16px;line-height:1.85;letter-spacing:.01em;text-wrap:pretty;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  mix-blend-mode:multiply;
+}
+::selection{background:var(--pink);color:var(--ink)}
+img{display:block;max-width:100%}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--terra);outline-offset:3px;border-radius:2px}
+.wrap{max-width:1160px;margin:0 auto;padding:0 clamp(20px,5vw,64px);position:relative;z-index:1}
+
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:50;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px clamp(20px,5vw,64px);
+  background:rgba(250,246,238,.72);backdrop-filter:blur(14px) saturate(1.2);-webkit-backdrop-filter:blur(14px) saturate(1.2);
+  border-bottom:1px solid rgba(51,50,45,.07);
+}
+.logo{font-family:var(--serif);font-size:21px;font-weight:400;letter-spacing:.06em;text-decoration:none}
+.logo em{font-style:normal;color:var(--sage-deep);font-size:14px;margin-left:10px;letter-spacing:.2em}
+.nav-links{display:flex;gap:clamp(18px,3vw,40px);list-style:none}
+.nav-links a{text-decoration:none;font-size:14.5px;color:var(--ink-soft);letter-spacing:.08em;transition:color .3s}
+.nav-links a:hover{color:var(--terra-deep)}
+.nav-cta{
+  font-size:14px;letter-spacing:.06em;text-decoration:none;
+  border:1px solid var(--ink);border-radius:999px;padding:9px 22px;
+  transition:background .35s,color .35s;
+}
+.nav-cta:hover{background:var(--ink);color:var(--paper)}
+@media(max-width:760px){.nav-links{display:none}}
+
+.hero{
+  min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;position:relative;overflow:hidden;padding:84px 20px 40px;
+}
+.beams{position:absolute;inset:-20%;pointer-events:none;z-index:0}
+.beams::before,.beams::after{
+  content:"";position:absolute;width:38vw;height:160%;
+  background:linear-gradient(180deg,rgba(255,236,190,0) 0%,rgba(255,232,178,.5) 35%,rgba(255,224,160,.28) 60%,rgba(255,236,190,0) 100%);
+  filter:blur(28px);
+}
+.beams::before{left:8%;top:-30%;transform:rotate(24deg);animation:drift 16s ease-in-out infinite alternate}
+.beams::after{right:14%;top:-20%;transform:rotate(24deg);width:24vw;opacity:.7;animation:drift 20s ease-in-out infinite alternate-reverse}
+@keyframes drift{from{transform:rotate(24deg) translateX(-3vw)}to{transform:rotate(24deg) translateX(4vw)}}
+.hero-eyebrow{font-size:13px;letter-spacing:.42em;text-indent:.42em;color:var(--ink-soft);margin-bottom:16px;position:relative;z-index:2}
+.hero-name{
+  font-family:var(--serif);font-weight:400;line-height:1.02;
+  font-size:clamp(48px,10.5vw,116px);letter-spacing:.08em;text-indent:.08em;position:relative;z-index:2;
+}
+.hero-name .en{display:block;font-size:clamp(13px,1.6vw,17px);letter-spacing:.55em;text-indent:.55em;color:var(--sage-ink);margin-top:10px;font-family:var(--sans);font-weight:500}
+.hero-sub{max-width:430px;margin:16px auto 0;color:var(--ink-soft);font-size:16.5px;position:relative;z-index:2}
+.arch-wrap{margin:clamp(26px,4.5vh,48px) 0 clamp(22px,4vh,40px);position:relative;z-index:1}
+.arch{
+  width:min(300px,66vw);height:min(370px,40svh);
+  margin:0 auto;border-radius:999px 999px 18px 18px;overflow:hidden;
+  box-shadow:0 30px 80px -30px rgba(95,109,87,.45),0 8px 30px -12px rgba(51,50,45,.18);position:relative;
+}
+.arch::after{content:"";position:absolute;left:0;right:0;bottom:0;height:46%;z-index:1;background:linear-gradient(transparent,rgba(40,42,36,.62));pointer-events:none}
+.arch img{width:100%;height:100%;object-fit:cover}
+.arch.breathe img{animation:breathe 8s var(--ease) infinite}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
+.breath-word{
+  position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:2;
+  font-family:var(--serif);font-style:normal;font-size:20px;font-weight:400;letter-spacing:.3em;text-indent:.3em;
+  color:#FFFDF6;text-shadow:0 1px 18px rgba(30,32,26,.75);
+  opacity:0;animation:breathText 8s linear infinite;white-space:nowrap;
+}
+.breath-word.out{animation-delay:4s}
+@keyframes breathText{0%{opacity:0}8%{opacity:1}42%{opacity:1}54%{opacity:0}100%{opacity:0}}
+.breath-note{font-size:12.5px;letter-spacing:.28em;color:var(--ink-soft);margin-top:16px}
+.hero-ctas{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;position:relative;z-index:2}
+.btn{
+  display:inline-flex;align-items:center;gap:10px;border-radius:999px;padding:15px 34px;
+  font-size:15.5px;letter-spacing:.05em;text-decoration:none;
+  transition:transform .35s var(--ease),background .35s,color .35s,box-shadow .35s;
+}
+.btn-primary{background:var(--terra-deep);color:#FDF9F1;box-shadow:0 12px 30px -12px rgba(169,86,54,.55)}
+.btn-primary:hover{background:var(--terra);transform:translateY(-2px)}
+.btn-ghost{border:1px solid var(--line);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--ink);transform:translateY(-2px)}
+
+section{position:relative;z-index:1}
+.sec{padding:clamp(90px,14vh,150px) 0;scroll-margin-top:60px}
+.sec-head{max-width:640px;margin-bottom:clamp(40px,7vh,72px)}
+.kicker{display:flex;align-items:center;gap:14px;font-size:12.5px;letter-spacing:.34em;text-transform:uppercase;color:var(--terra-deep);margin-bottom:20px}
+.kicker::before{content:"";width:34px;height:1px;background:var(--terra)}
+h2{font-family:var(--serif);font-weight:400;font-size:clamp(34px,5vw,54px);line-height:1.18;letter-spacing:.02em;text-wrap:balance}
+.sec-sub{margin-top:18px;color:var(--ink-soft);font-size:16.5px;max-width:520px}
+.alt{background:linear-gradient(180deg,var(--paper),var(--sand) 18%,var(--sand) 82%,var(--paper))}
+.fade{opacity:0;transform:translateY(22px);transition:opacity .6s var(--ease) var(--d,0s),transform .6s var(--ease) var(--d,0s)}
+.fade.in{opacity:1;transform:none}
+
+.kb{overflow:hidden;display:block}
+.kb img{width:100%;height:100%;object-fit:cover;transform:scale(1.001);transition:transform 6s var(--ease)}
+.kb:hover img{transform:scale(1.08)}
+.practice-photo{border-radius:20px;overflow:hidden;margin-bottom:clamp(44px,7vh,72px);box-shadow:0 24px 60px -28px rgba(95,109,87,.4)}
+.practice-photo .kb{height:clamp(280px,48vh,460px)}
+.pcap{font-size:13px;color:var(--ink-soft);margin-top:12px;letter-spacing:.06em;font-family:var(--serif)}
+.practice-list{list-style:none;border-top:1px solid var(--line)}
+.practice{
+  display:grid;grid-template-columns:70px 1fr auto;gap:clamp(16px,3vw,40px);align-items:baseline;
+  padding:clamp(26px,4.5vh,44px) 8px;border-bottom:1px solid var(--line);
+  transition:background .4s,padding-left .4s var(--ease);
+}
+.practice:hover{background:rgba(255,252,244,.65);padding-left:22px}
+.p-num{font-family:var(--serif);font-style:italic;font-size:19px;color:var(--sage-deep);transition:color .4s}
+.practice:hover .p-num{color:var(--terra-deep)}
+.p-name{font-family:var(--serif);font-weight:400;font-size:clamp(24px,3.4vw,36px);letter-spacing:.03em;line-height:1.2}
+.p-name .en{font-size:13.5px;letter-spacing:.3em;color:var(--ink-soft);margin-left:14px;font-family:var(--sans);font-weight:500;white-space:nowrap}
+.p-desc{color:var(--ink-soft);margin-top:8px;max-width:520px;font-size:15.5px}
+.p-meta{display:flex;gap:10px;align-items:center;white-space:nowrap;font-size:13px;color:var(--ink-soft);letter-spacing:.05em}
+.p-meta i{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:6px;vertical-align:1px}
+.lv1 i{background:var(--sage)}.lv2 i{background:var(--terra)}.lv3 i{background:var(--pink)}
+@media(max-width:760px){.practice{grid-template-columns:1fr;gap:6px}.p-meta{white-space:normal}}
+
+.teachers{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(20px,3.5vw,44px)}
+@media(max-width:900px){.teachers{grid-template-columns:1fr;max-width:460px;margin:0 auto}}
+.teacher-card{text-align:center}
+.t-photo{width:min(300px,100%);aspect-ratio:3/4;margin:0 auto 26px;border-radius:999px 999px 16px 16px;overflow:hidden;box-shadow:0 20px 50px -24px rgba(95,109,87,.42)}
+.teacher-card h3{font-family:var(--serif);font-weight:400;font-size:26px;letter-spacing:.06em}
+.t-role{font-size:12.5px;letter-spacing:.3em;color:var(--terra-deep);margin:8px 0 16px;text-transform:uppercase}
+.t-quote{font-family:var(--serif);font-style:normal;font-weight:300;color:var(--ink-soft);font-size:17px;line-height:1.7;min-height:3.4em;max-width:300px;margin:0 auto}
+.t-quote .caret{display:inline-block;width:1px;height:1em;background:var(--terra);vertical-align:-2px;margin-left:2px;animation:blink 1s step-end infinite}
+@keyframes blink{50%{opacity:0}}
+.t-hint{font-size:12px;letter-spacing:.2em;color:var(--sage-deep);margin-top:12px;opacity:.75}
+
+.free{background:var(--sage-deep);color:#F7F4EA;border-radius:clamp(20px,3vw,34px);padding:clamp(50px,9vh,100px) clamp(24px,6vw,90px);position:relative;overflow:hidden}
+.free .kicker{color:var(--pink)}.free .kicker::before{background:var(--pink)}
+.free h2{color:#FBF9F2}
+.free .sec-sub{color:rgba(247,244,234,.75)}
+.free-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(30px,6vw,80px);align-items:start;margin-top:10px}
+@media(max-width:860px){.free-grid{grid-template-columns:1fr}}
+.free-points{list-style:none;margin-top:26px;display:grid;gap:14px}
+.free-points li{display:flex;gap:14px;align-items:baseline;font-size:15.5px;color:rgba(247,244,234,.88)}
+.free-points li::before{content:"—";color:var(--pink);flex:none}
+.frm label{display:block;font-size:12.5px;letter-spacing:.22em;margin:22px 0 8px;color:rgba(247,244,234,.8);text-transform:uppercase}
+.frm input,.frm select{
+  width:100%;background:rgba(250,246,238,.1);border:1px solid rgba(250,246,238,.35);
+  border-radius:12px;padding:14px 16px;color:#FBF9F2;font:inherit;font-size:15.5px;
+  transition:border-color .3s,background .3s;min-height:44px;
+}
+.frm input::placeholder{color:rgba(250,246,238,.45)}
+.frm input:focus,.frm select:focus{outline:none;border-color:var(--pink);background:rgba(250,246,238,.16)}
+.frm select option{color:var(--ink);background:var(--paper)}
+.frm .btn-primary{margin-top:28px;width:100%;justify-content:center;background:var(--terra);color:#fff;border:none;cursor:pointer}
+.frm .btn-primary:hover{background:var(--terra-deep)}
+.frm .err{color:#F4C9BC;font-size:13.5px;margin-top:10px;min-height:1.4em}
+.frm-ok{display:none;text-align:center;padding:40px 0}
+.frm-ok .big{font-family:var(--serif);font-size:34px;font-weight:400;margin-bottom:12px}
+.frm-ok p{color:rgba(247,244,234,.78);font-size:15.5px}
+.frm.done .frm-fields{display:none}
+.frm.done .frm-ok{display:block}
+
+footer{padding:70px 0 46px;text-align:center;color:var(--ink-soft)}
+.foot-name{font-family:var(--serif);font-size:30px;font-weight:400;letter-spacing:.1em;color:var(--ink)}
+.foot-meta{margin-top:14px;font-size:14px;letter-spacing:.06em;line-height:2}
+.foot-breath{margin-top:30px;font-size:11.5px;letter-spacing:.4em;text-indent:.4em;color:var(--sage-deep)}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .arch.breathe img{animation:none;transform:scale(1.02)}
+  .breath-word{animation:none;opacity:.9}
+  .breath-word.out{display:none}
+  .beams::before,.beams::after{animation:none}
+  .fade{opacity:1;transform:none;transition:none}
+  .kb img{transition:none}.kb:hover img{transform:none}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="./">健身<em>GYMLOG</em></a>
+  <ul class="nav-links">
+    <li><a href="#ways">玩法</a></li>
+    <li><a href="#coach">AI 教練</a></li>
+    <li><a href="#backup">雲端備份</a></li>
+  </ul>
+  <a class="nav-cta" href="#" data-app-link="1">開始訓練</a>
+</nav>
+
+<header class="hero">
+  <div class="beams" aria-hidden="true"></div>
+  <p class="hero-eyebrow fade">免費 · 無廣告 · 資料屬於你</p>
+  <h1 class="hero-name fade" style="--d:.08s">健身<span class="en">GYMLOG — 慢慢練，先練得耐</span></h1>
+  <div class="arch-wrap fade" style="--d:.18s">
+    <div class="arch breathe">
+      <img src="./img/studio.png" alt="晨光穿過訓練空間" />
+      <span class="breath-word" aria-hidden="true">吸 氣</span>
+      <span class="breath-word out" aria-hidden="true">落 重量</span>
+    </div>
+    <p class="breath-note">紀錄每一組 · 漸進加重 · 睇住自己升</p>
+  </div>
+  <p class="hero-sub fade" style="--d:.28s">一個慢嘅健身紀錄 app。唔追操到嘔，只求每一組，都比上一組進步多少少。</p>
+  <div class="hero-ctas fade" style="--d:.38s">
+    <a class="btn btn-primary" href="#" data-app-link="1">開始訓練 — 免費</a>
+    <a class="btn btn-ghost" href="#ways">睇下玩法</a>
+  </div>
+</header>
+
+<section class="sec" id="ways">
+  <div class="wrap">
+    <div class="sec-head fade">
+      <p class="kicker">四種玩法</p>
+      <h2>快，有好多種。<br />慢，得返一種。</h2>
+      <p class="sec-sub">由第一組深蹲開始，四樣嘢幫你由新手練到有型——唔使買課，唔使簽約。</p>
+    </div>
+    <figure class="practice-photo fade kb">
+      <img src="./img/class.png" alt="晨光下的訓練空間" loading="lazy" />
+      <figcaption class="pcap">第一日冇紀錄？正常。由 S 級動作揀一個開始。</figcaption>
+    </figure>
+    <ul class="practice-list">
+      <li class="practice fade">
+        <span class="p-num">01</span>
+        <div>
+          <h3 class="p-name">動作庫<span class="en">EXERCISES</span></h3>
+          <p class="p-desc">S 級性價比排位：深蹲、臥推、硬舉……每個動作話你知練邊組肌群、回報有幾高。</p>
+        </div>
+        <span class="p-meta lv2"><i></i>自訂動作 · 肌群分類</span>
+      </li>
+      <li class="practice fade">
+        <span class="p-num">02</span>
+        <div>
+          <h3 class="p-name">AI 教練<span class="en">AI COACH</span></h3>
+          <p class="p-desc">睇住你嘅紀錄調整建議：增肌 8–12 下、漸進加重 2.5kg——唔使諗，跟住練。</p>
+        </div>
+        <span class="p-meta lv1"><i></i>增肌 · 減脂 · 力量</span>
+      </li>
+      <li class="practice fade">
+        <span class="p-num">03</span>
+        <div>
+          <h3 class="p-name">進度圖表<span class="en">PROGRESS</span></h3>
+          <p class="p-desc">訓練量、肌群分布、PR 紀錄、半年熱力圖——每一組都喺圖度留低痕跡。</p>
+        </div>
+        <span class="p-meta lv3"><i></i>訓練量 · PR · 熱力圖</span>
+      </li>
+      <li class="practice fade">
+        <span class="p-num">04</span>
+        <div>
+          <h3 class="p-name">雲端備份<span class="en">BACKUP</span></h3>
+          <p class="p-desc">一次設定，自動備份。換機一撳回復，所有紀錄原封不動跟你去。</p>
+        </div>
+        <span class="p-meta lv1"><i></i>自動 · 免費 · 屬於你</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section class="sec alt" id="coach">
+  <div class="wrap">
+    <div class="sec-head fade">
+      <p class="kicker">AI 教練 · 三個目標</p>
+      <h2>佢唔會鬧你懶，<br />只會話你知下一步。</h2>
+      <p class="sec-sub">滑鼠停喺目標上面，聽下 AI 教練點講。</p>
+    </div>
+    <div class="teachers">
+      <div class="teacher-card fade">
+        <div class="t-photo kb"><img src="./img/t-lam.png" alt="增肌目標" loading="lazy" /></div>
+        <h3>增肌</h3>
+        <p class="t-role">Hypertrophy</p>
+        <p class="t-quote" data-quote="「8 至 12 下，中重量高容量。每組比上次重 2.5kg——肌肉唔識講大話。」"><span class="caret"></span></p>
+        <p class="t-hint">— 滑鼠停留，聽教練講 —</p>
+      </div>
+      <div class="teacher-card fade" style="--d:.1s">
+        <div class="t-photo kb"><img src="./img/t-laan.png" alt="減脂目標" loading="lazy" /></div>
+        <h3>減脂</h3>
+        <p class="t-role">Cutting</p>
+        <p class="t-quote" data-quote="「重量照舊，次數照舊——減脂期保住力量，就保得住肌肉。」"><span class="caret"></span></p>
+        <p class="t-hint">— 滑鼠停留，聽教練講 —</p>
+      </div>
+      <div class="teacher-card fade" style="--d:.2s">
+        <div class="t-photo kb"><img src="./img/t-yutming.png" alt="力量目標" loading="lazy" /></div>
+        <h3>力量</h3>
+        <p class="t-role">Strength</p>
+        <p class="t-quote" data-quote="「3 至 5 下，大重量長休息。力量係練出嚟嘅耐心，唔係衝動。」"><span class="caret"></span></p>
+        <p class="t-hint">— 滑鼠停留，聽教練講 —</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="backup">
+  <div class="wrap">
+    <div class="free fade">
+      <p class="kicker">Free forever</p>
+      <h2>免費。冇廣告。資料屬於你。</h2>
+      <p class="sec-sub">唔使開戶、唔使信用卡。資料存喺你自己嘅裝置，想備份就一撳上雲端。</p>
+      <div class="free-grid">
+        <ul class="free-points">
+          <li>動作庫 + AI 教練 + 進度圖表，全部解鎖</li>
+          <li>雲端備份：設定一次，之後自動</li>
+          <li>CSV 匯入匯出 — 資料隨時帶走</li>
+          <li>支援 GymLog / Hevy / Strong 格式</li>
+        </ul>
+        <form class="frm" id="planForm" novalidate>
+          <div class="frm-fields">
+            <label for="fGoal">你嘅目標</label>
+            <select id="fGoal" name="goal">
+              <option>增肌 — 中重量高容量</option>
+              <option>減脂 — 保力量減體脂</option>
+              <option>力量 — 大重量低次數</option>
+              <option>唔知 — 由 S 級動作開始</option>
+            </select>
+            <label for="fFreq">每星期練幾多日</label>
+            <select id="fFreq" name="freq">
+              <option>2 日</option>
+              <option>3 日</option>
+              <option>4 日</option>
+              <option>5 日或以上</option>
+            </select>
+            <button class="btn btn-primary" type="submit">去設定我嘅計劃 →</button>
+            <p class="err" id="fErr" role="alert"></p>
+            <p class="frm-privacy">會帶你入 app 揀好目標，即刻開始第一個紀錄。</p>
+          </div>
+          <div class="frm-ok">
+            <p class="big">好，去緊 ✦</p>
+            <p>喺 app 入面揀返你嘅目標，<br />由第一組深蹲開始。</p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p class="foot-name">健身 GymLog</p>
+    <p class="foot-meta">
+      免費健身追蹤 · 紀錄訓練 · 追蹤 PR · 分析進度<br />
+      <a href="#" data-app-link="1" style="color:var(--terra-deep)">開始訓練 →</a>
+    </p>
+    <p class="foot-breath">吸 — 二 — 三 — 四　落 — 重 — 二 — 三</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); }
+    });
+  },{threshold:.14,rootMargin:"0px 0px -6% 0px"});
+  document.querySelectorAll(".fade").forEach(function(el){ io.observe(el); });
+
+  document.querySelectorAll(".t-quote").forEach(function(q){
+    var full = q.getAttribute("data-quote") || "";
+    var timer = null;
+    function type(){
+      if(timer){ clearInterval(timer); timer = null; }
+      if(reduced){ q.textContent = full; return; }
+      q.textContent = "";
+      var caret = document.createElement("span"); caret.className = "caret";
+      q.appendChild(caret);
+      var i = 0;
+      timer = setInterval(function(){
+        i += 1;
+        caret.insertAdjacentText("beforebegin", full.charAt(i-1));
+        if(i >= full.length){ clearInterval(timer); timer = null; setTimeout(function(){ caret.remove(); }, 1200); }
+      }, 34);
+    }
+    var card = q.closest(".teacher-card");
+    card.addEventListener("mouseenter", type);
+    card.addEventListener("focusin", type);
+    card.addEventListener("touchstart", function(){ if(!q.textContent || q.textContent.length < full.length) type(); }, {passive:true});
+  });
+
+  /* plan form → 目標寫入 localStorage,app 開開就讀到 */
+  var BASE = (function(){
+    var p = location.pathname.replace(/\/[^\/]*$/, "");
+    return p.replace(/\/$/, ""); // e.g. /GYM
+  })();
+  document.querySelectorAll("[data-app-link]").forEach(function(a){
+    a.setAttribute("href", BASE + "/index.html");
+    a.addEventListener("click", function(ev){
+      var g = null;
+      try{ g = JSON.parse(localStorage.getItem("gymlog_landing_plan") || "null"); }catch(_){}
+      if(g && g.goal){
+        var m = {"增肌 — 中重量高容量":"增肌","減脂 — 保力量減體脂":"減脂","力量 — 大重量低次數":"力量"};
+        var goal = m[g.goal];
+        if(goal){
+          try{
+            var s = JSON.parse(localStorage.getItem("gymlog_v1") || "null");
+            if(s && s.settings){ s.settings.goal = goal; localStorage.setItem("gymlog_v1", JSON.stringify(s)); }
+          }catch(_){}
+        }
+      }
+    });
+  });
+  var frm = document.getElementById("planForm");
+  frm.addEventListener("submit", function(e){
+    e.preventDefault();
+    try{
+      localStorage.setItem("gymlog_landing_plan", JSON.stringify({
+        goal: frm.goal.value, freq: frm.freq.value, at: new Date().toISOString()
+      }));
+    }catch(_){}
+    frm.classList.add("done");
+    setTimeout(function(){ location.href = BASE + "/index.html"; }, 1200);
+  });
+})();
+</script>
+</body>
+</html>
