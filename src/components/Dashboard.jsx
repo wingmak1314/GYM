@@ -5,8 +5,8 @@ import ExerciseIcon from '../icons.jsx'
 import { EXERCISES } from '../exercises.js'
 
 const MUSCLE_COLORS = {
-  '胸': '#c7f546', '背': '#4db8ff', '肩': '#ff9f43', '二頭': '#ff6b9d',
-  '三頭': '#a29bfe', '股四頭': '#00cec9', '腿後側': '#6c5ce7', '臀': '#fd79a8',
+  '胸': '#C06B4A', '背': '#5F6D57', '肩': '#B0806E', '二頭': '#E5BCB3',
+  '三頭': '#A9B6A0', '股四頭': '#8FA07E', '腿後側': '#C89B7B', '臀': '#D9A08C',
   '小腿': '#fdcb6e', '核心': '#74b9ff',
 }
 
@@ -115,7 +115,7 @@ function AiCoachCard({ state }) {
           <div className="ai-reco-icon"><ExerciseIcon icon={ex ? ex.id : 'generic'} size="md" /></div>
           <div>
             <b>今日建議:{reco.muscle}</b>
-            <div style={{ color: '#2997ff', fontWeight: 600 }}>{ex ? ex.zh : reco.zh} — 最高性價比選擇</div>
+            <div style={{ color: '#A95636', fontWeight: 600 }}>{ex ? ex.zh : reco.zh} — 最高性價比選擇</div>
             <p>{reco.reason}</p>
           </div>
         </div>
@@ -177,9 +177,9 @@ function FreqChart({ data }) {
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="linechart" preserveAspectRatio="none">
       {data.map((d, i) => (
-        <circle key={i} cx={x(i)} cy={y(d.sessions)} r="3" fill="#1fcefd"><title>{`${d.label} 週: ${d.sessions} 次`}</title></circle>
+        <circle key={i} cx={x(i)} cy={y(d.sessions)} r="3" fill="#5F6D57"><title>{`${d.label} 週: ${d.sessions} 次`}</title></circle>
       ))}
-      <polyline points={line} fill="none" stroke="#1fcefd" strokeWidth="2" strokeDasharray="4 3" />
+      <polyline points={line} fill="none" stroke="#5F6D57" strokeWidth="2" strokeDasharray="4 3" />
     </svg>
   )
 }

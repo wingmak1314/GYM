@@ -5,15 +5,15 @@
 // score: 0-100,理由:肌群覆蓋/荷爾蒙刺激/時間效率/新手友好
 const TIERS = {
   S: {
-    color: '#c7f546', label: 'S · 頂級回報', note: '複合大動作,多肌群+高神經刺激,練一抵三',
+    color: '#A95636', label: 'S · 頂級回報', note: '複合大動作,多肌群+高神經刺激,練一抵三',
     ids: ['squat', 'deadlift', 'bench', 'ohp', 'pullup', 'bbrow', 'hipthrust', 'frontsquat', 'dips', 'pushup', 'kbellswing', 'trapdead', 'reversechin', 'boxsquat', 'kbellclean'],
   },
   A: {
-    color: '#4db8ff', label: 'A · 高性價比', note: '主要複合動作,覆蓋大肌群,穩健增長',
+    color: '#5F6D57', label: 'A · 高性價比', note: '主要複合動作,覆蓋大肌群,穩健增長',
     ids: ['rdl', 'legpress', 'latpull', 'searow', 'ibench', 'dbohp', 'bulgarian', 'lunge', 'hacksquat', 'goblet', 'idbench', 'dbbench', 'dbrow', 'incline', 'pullup', 'tricepsdips', 'farmerwalk', 'thrusters', 'dbthrusters', 'turkishgetup', 'cossack', 'pausesquat', 'deficitdead', 'sumodead', 'zercher', 'tbarrow', 'trapdead', 'reversechin', 'boxsquat', 'kbellclean', 'pistol'],
   },
   B: {
-    color: '#ff9f43', label: 'B · 輔助動作', note: '單關節/機械,適合補弱點同泵感',
+    color: '#B0806E', label: 'B · 輔助動作', note: '單關節/機械,適合補弱點同泵感',
     ids: ['pecdeck', 'cablefly', 'laterals', 'pushdown', 'ropedown', 'bbcurl', 'dbcurl', 'legcurl', 'legext', 'calfraise', 'decline', 'preacher', 'hammer', 'seatedcurl', 'seatedcalf', 'cablecrunch', 'russiantwist', 'hangingleg', 'legraise', 'plank', 'crunch', 'arnold', 'latraise', 'uprightrow', 'facelift', 'reardelt', 'wallball', 'pallof', 'rower', 'bike', 'treadmill', 'elliptical', 'stairclimber', 'swim', 'skierg', 'assaultbike', 'inclinewalk', 'ropejump', 'sledpush', 'sledpull', 'sandbagcarry', 'rucking', 'burpeebroad', 'medballsquat', 'medball', 'woodchop', 'pike', 'handstand', 'dbshrug', 'bbshrug', 'machinelateral', 'cablelateral', 'bandpullapart', 'deadhang', 'bearcrawl', 'bandedwalk', 'reversehyper'],
   },
   C: {

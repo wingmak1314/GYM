@@ -165,7 +165,7 @@ export default function App() {
           <svg className="logo-mark" viewBox="0 0 64 64" width="30" height="30">
             <defs>
               <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stopColor="#c7f546" /><stop offset="1" stopColor="#4db8ff" />
+                <stop offset="0" stopColor="#C06B4A" /><stop offset="1" stopColor="#5F6D57" />
               </linearGradient>
             </defs>
             <rect x="2" y="2" width="60" height="60" rx="15" fill="#0b0c10" stroke="rgba(199,245,70,0.25)" />

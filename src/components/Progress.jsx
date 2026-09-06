@@ -16,12 +16,12 @@ function LineChart({ points, getY, fmt }) {
       <line x1={P} y1={y(min)} x2={W - P} y2={y(min)} stroke="#23262e" />
       {points.map((p, i) => (
         <g key={i}>
-          <circle cx={x(i)} cy={y(getY(p))} r="3.5" fill="#c7f546">
+          <circle cx={x(i)} cy={y(getY(p))} r="3.5" fill="#A95636">
             <title>{`${p.date}: ${fmt(getY(p))}`}</title>
           </circle>
         </g>
       ))}
-      <polyline points={line} fill="none" stroke="#c7f546" strokeWidth="2" strokeLinejoin="round" />
+      <polyline points={line} fill="none" stroke="#A95636" strokeWidth="2" strokeLinejoin="round" />
     </svg>
   )
 }

@@ -20,8 +20,8 @@ function Chart({ points, field, fmt }) {
   const line = usable.map((p, i) => `${x(i)},${y(p[field])}`).join(' ')
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="linechart" preserveAspectRatio="none">
-      {usable.map((p, i) => <circle key={i} cx={x(i)} cy={y(p[field])} r="3.5" fill="#4db8ff"><title>{`${p.date}: ${p[field]}`}</title></circle>)}
-      <polyline points={line} fill="none" stroke="#4db8ff" strokeWidth="2" />
+      {usable.map((p, i) => <circle key={i} cx={x(i)} cy={y(p[field])} r="3.5" fill="#A95636"><title>{`${p.date}: ${p[field]}`}</title></circle>)}
+      <polyline points={line} fill="none" stroke="#A95636" strokeWidth="2" />
     </svg>
   )
 }
