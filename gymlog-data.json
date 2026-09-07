@@ -1,1 +1,1 @@
-{"_note": "新 token 測試", "workouts": [], "measurements": [], "settings": {}}
+{"workouts": [{"id": "sim1", "date": "2026-09-07", "name": "推胸日", "exercises": [{"exerciseId": "bench", "name": "槓鈴臥推", "muscle": "胸", "sets": [{"kg": 60, "reps": 10}, {"kg": 62.5, "reps": 8}]}]}], "measurements": [], "settings": {"unit": "kg", "goal": "增肌", "autoGh": true, "lastSync": ""}}
