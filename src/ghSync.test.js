@@ -55,6 +55,20 @@ describe('GitHub repo 備份', () => {
     expect(r).toBe('wingmak1314/GYM')
   })
 
+  it('sanitize: state 入面嘅 ghToken 唔會寫入備份(409 secret scanning)', async () => {
+    let putBody = null
+    global.fetch = vi.fn((url, opt) => {
+      if (opt.method === 'GET') return Promise.resolve(ok({ sha: 'oldsha' }))
+      putBody = JSON.parse(opt.body)
+      return Promise.resolve(ok({ commit: { sha: 'new' } }))
+    })
+    await pushToRepo({ workouts: [], settings: { ghToken: 'github_pat_SECRET123', goal: '增肌' } }, 'tok')
+    const decoded = JSON.parse(decodeURIComponent(escape(atob(putBody.content))))
+    expect(decoded.settings.ghToken).toBeUndefined()
+    expect(decoded.settings.goal).toBe('增肌') // 其他設定保留
+    expect(JSON.stringify(putBody)).not.toContain('github_pat_SECRET123')
+  })
+
   it('friendlyGhError 對應', () => {
     expect(friendlyGhError(new Error('GitHub 401: bad'))).toContain('過期')
     expect(friendlyGhError(new Error('GitHub 403: x'))).toContain('Contents')

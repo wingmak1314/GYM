@@ -32,9 +32,23 @@ async function getFileSha(token) {
 }
 
 // 上傳(自動建立或更新)
+// ⚠️ GitHub Secret Scanning 會擋內容含有 token 字串嘅 commit (409),
+//    所以備份前一定先將 ghToken 剔走,回復嗰陣會保留本地嗰個 (Settings.jsx 處理)
+function sanitize(state) {
+  const clean = JSON.parse(JSON.stringify(state))
+  if (clean.settings) {
+    delete clean.settings.ghToken
+    // 任何其他疑似 token 欄位都剔走
+    for (const k of Object.keys(clean.settings)) {
+      if (typeof clean.settings[k] === 'string' && clean.settings[k].startsWith('github_pat_')) delete clean.settings[k]
+    }
+  }
+  return clean
+}
+
 export async function pushToRepo(state, token) {
   if (!token) throw new Error('未設定 GitHub Token')
-  const content = btoa(unescape(encodeURIComponent(JSON.stringify(state)))) // UTF-8 safe base64
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(sanitize(state))))) // UTF-8 safe base64
   const body = { message: 'GymLog 自動備份 ' + new Date().toISOString().slice(0, 16), content, branch: BRANCH }
   try {
     body.sha = await getFileSha(token)
@@ -71,6 +85,6 @@ export function friendlyGhError(e) {
   if (m.includes('403')) return 'Token 冇寫入權限 — 要 tick「Contents: Read and write」'
   if (m.includes('404') && m.includes('branch')) return 'data branch 唔見咗 — 話俾我知,我幫你開返'
   if (m.includes('404')) return '搵唔到 repo — token 要有 GYM repo 存取權'
-  if (m.includes('422')) return 'GitHub 話請求有問題 — 通常係 token 過期或權限改壞咗'
+  if (m.includes('409')) return 'GitHub 擋咗呢次備份(內容有敏感字串)— 已修復版本就會正常,更新後再試'
   return m
 }
