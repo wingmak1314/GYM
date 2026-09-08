@@ -34,7 +34,7 @@ function WorkoutDetail({ w, ctx }) {
           ))}
           <div className="hist-actions">
             <button className="btn btn-ghost btn-sm" onClick={() => ctx.startWorkout({ name: w.name, exercises: w.exercises })}>複製成新訓練</button>
-            <button className="btn btn-danger btn-sm" onClick={() => ctx.deleteWorkout(w.id)}>刪除</button>
+            <button className="btn btn-danger btn-sm" onClick={(e) => { if (confirm('確定刪除呢次訓練?刪咗會同步上雲端,冇得返轉頭。')) ctx.deleteWorkout(w.id) }}>刪除</button>
           </div>
         </div>
       )}

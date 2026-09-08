@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { buildHeatmap, weeklyVolume, muscleDistribution, detectPR, epley, workoutVolume, workoutSets, cumulativeVolume, weeklyFrequency } from '../engine.js'
+import { buildHeatmap, weeklyVolume, muscleDistribution, detectPR, cumulativeVolume, weeklyFrequency } from '../engine.js'
 import { suggestToday, computeAchievements, GOALS } from '../aiCoach.js'
 import ExerciseIcon from '../icons.jsx'
 import { EXERCISES } from '../exercises.js'

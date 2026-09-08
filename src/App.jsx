@@ -96,7 +96,11 @@ export default function App() {
   }
 
   const deleteWorkout = (id) => {
-    setState((s) => ({ ...s, workouts: s.workouts.filter((w) => w.id !== id) }))
+    setState((s) => {
+      const next = { ...s, workouts: s.workouts.filter((w) => w.id !== id) }
+      autoSync(next)
+      return next
+    })
     showToast('已刪除')
   }
 
@@ -108,17 +112,29 @@ export default function App() {
   }
 
   const deleteMeasurement = (date) => {
-    setState((s) => ({ ...s, measurements: s.measurements.filter((m) => m.date !== date) }))
+    setState((s) => {
+      const next = { ...s, measurements: s.measurements.filter((m) => m.date !== date) }
+      autoSync(next)
+      return next
+    })
   }
 
   const saveTemplate = (name, exercises) => {
-    setState((s) => ({ ...s, templates: [...s.templates, { id: uid(), name, exercises }] }))
+    setState((s) => {
+      const next = { ...s, templates: [...s.templates, { id: uid(), name, exercises }] }
+      autoSync(next)
+      return next
+    })
     showToast('✅ 已儲存為課表')
   }
 
   const addCustomExercise = (zh, muscle) => {
     const ex = { id: 'custom-' + uid(), zh, en: '', muscle, equipment: '自訂' }
-    setState((s) => ({ ...s, customExercises: [...(s.customExercises || []), ex] }))
+    setState((s) => {
+      const next = { ...s, customExercises: [...(s.customExercises || []), ex] }
+      autoSync(next)
+      return next
+    })
     return ex
   }
 
@@ -132,7 +148,12 @@ export default function App() {
   }
 
   const addSupp = (name) => {
-    setState((s) => (s.suppList.includes(name) ? s : { ...s, suppList: [...s.suppList, name] }))
+    setState((s) => {
+      if (s.suppList.includes(name)) return s
+      const next = { ...s, suppList: [...s.suppList, name] }
+      autoSync(next)
+      return next
+    })
   }
 
   const addPhoto = (photo) => {
@@ -141,7 +162,11 @@ export default function App() {
     autoSync(next)
   }
   const deletePhoto = (id) => {
-    setState((s) => ({ ...s, photos: (s.photos || []).filter((p) => p.id !== id) }))
+    setState((s) => {
+      const next = { ...s, photos: (s.photos || []).filter((p) => p.id !== id) }
+      autoSync(next)
+      return next
+    })
   }
 
   const stats = useMemo(() => {

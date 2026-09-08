@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { EXERCISES, MUSCLES } from '../exercises.js'
 import { detectPR, lastWorkoutFor, workoutVolume, workoutSets, workoutReps } from '../engine.js'
-import { valueTier, suggestNextWeight, PLANS, formCues, howTo } from '../aiCoach.js'
+import { valueTier, suggestNextWeight, PLANS, howTo } from '../aiCoach.js'
 import { PLANS_300 } from '../planGen.js'
 import ExerciseIcon from '../icons.jsx'
 

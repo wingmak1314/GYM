@@ -28,6 +28,9 @@ export default function Settings({ ctx }) {
   }
 
   const doPull = async () => {
+    const n = (state.workouts || []).length
+    const m = (state.measurements || []).length
+    if (!confirm(`回復會蓋走呢部機而家嘅資料${n || m ? `(現有 ${n} 次訓練 / ${m} 筆量測)` : '(而家係空的)'}。確定用雲端備份蓋過?`)) return
     setSyncing(true); setSt('下載緊…')
     try {
       const data = await pullFromRepo(state.settings.ghToken)
